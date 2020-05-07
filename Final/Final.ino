@@ -7,10 +7,12 @@
 #include <SharpIR.h>            //include the IR
 #include <filter.h>             //include IMU
 #include <SpeedControl.h>       //include Speed PID control
+#include <LineFollowing.h>      //include line following
 
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6
 SpeedControl Speed;       //creates a speed PID with default constants 
+LineFollowing line;       //creates a line following with default threshold
 
 Zumo32U4Motors motors;
 Zumo32U4Encoders encoders;   
@@ -18,7 +20,7 @@ Zumo32U4LineSensors lineSensors;
 Zumo32U4ProximitySensors proxSensors;
 Zumo32U4LCD lcd;
 
-enum DRIVE_STATE {STOP, DRIVE, WALL, SPINNING};
+enum DRIVE_STATE {STOP, DRIVE, WALL, TURN1, LINE, TURN2};
   DRIVE_STATE state = STOP;
 
 volatile uint8_t readyToPID = 0;   //a flag that is set when the PID timer overflows
@@ -48,7 +50,8 @@ float wallError = 0;      //the error in IRPID
 double baseSpeed = 30;    //speed with variable changes for IRPID
 double TargetDist = 30;   //how far away from the wall for IRPID
 
-uint16_t lineSensorValues[3] = { 0, 0, 0 };
+float lineLeft = 0;       //line following motor values
+float lineRight = 0;
 
 void setup()
 {
@@ -59,6 +62,9 @@ void setup()
   filter.Init();                      //initializes the IMU/complementary filter
   lineSensors.initThreeSensors();     //initializes the line sensors
   proxSensors.initFrontSensor();      //initializes front proximity sensor/remote control
+  line.Init();
+  Sharp.setIRPID(0.05, 0.05, -6);
+  filter.setGyroPID(0.2, 0.0, 0);
 }
 
 
@@ -73,7 +79,7 @@ void loop() {
   Sharp.IRPID(wallLeft, wallRight, wallError, TargetDist, baseSpeed); //update wall PID
   driveState();                                                       //state machine
   filter.CalcAngle(gyro, prediction, axis);                           //update IMU
-  lineSensors.read(lineSensorValues);                                 //update line sensor values
+  line.Update();                                                      //update line sensors and prox sensor
 }
 
 
@@ -104,24 +110,49 @@ void driveState(){
 
      case WALL:
           Drive(wallLeft, wallRight);     //drive based on wall PID
-          if((readingLeft > 1000 && readingCenter > 1000 && readingRight  >1000) || 
-          proxSensors.readBasicFront()){ //if it detects line or remote (kept making escape attempts)
-            state = SPINNING;
+          if(line.Detect() || proxSensors.readBasicFront()){ //if it detects line or remote (kept making escape attempts)
+            state = TURN1;
           }
           else{
             state = WALL;
           }
       break;
 
-      case SPINNING:
+      case TURN1:
       filter.GyroPID(LeftSpeed, RightSpeed, turnError, Angle);  //read gyro here to initialize bias
       Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
           
           if (filter.doneTurning()){ //use a range to stop turning 
-            state = STOP;      //STOP uses speed PID to 0, so turns a bit extra
+            if(line.Align(lineLeft, lineRight)){
+              state = LINE;      
+            }
+            Drive(lineLeft, lineRight);
           }
           else{
-            state = SPINNING;
+            state = TURN1;
+          }
+       break;
+
+       case LINE:
+       line.LinePID(lineLeft, lineRight, baseSpeed - 20);
+       Drive(lineLeft, lineRight);
+       if (proxSensors.readBasicFront()){
+        state = TURN2;
+       }
+       else{
+        state = LINE;
+       }
+       break;
+
+      case TURN2:
+      filter.GyroPID(LeftSpeed, RightSpeed, turnError, 270);  //read gyro here to initialize bias
+      Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
+          
+          if (filter.doneTurning()){ //use a range to stop turning
+            state = STOP;    
+          }
+          else{
+            state = TURN2;
           }
        break;
     
@@ -132,11 +163,7 @@ void driveState(){
 //sets the target speads for the speed PID and updates line sensors
 void Drive(int Left, int Right){  
       targetLeft = Left;
-      targetRight = Right;
-     
-      readingLeft = lineSensorValues[0];
-      readingCenter = lineSensorValues[1];
-      readingRight = lineSensorValues[2];   
+      targetRight = Right;  
 }
 
 
