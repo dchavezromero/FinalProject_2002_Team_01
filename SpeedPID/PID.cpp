@@ -24,21 +24,26 @@ double kp_gyro, double ki_gyro, double kd_gyro)
 
 void PID::setMotorsPID(double P, double I, double D)
 {
-  motorConsts[0] = kp_motors;
-  motorConsts[1] = ki_motors;
-  motorConsts[2] = kd_motors;
+  motorConsts[0] = P;
+  motorConsts[1] = I;
+  motorConsts[2] = D;
 }
 
 void PID::setIRPID(double P, double I, double D)
 {
-  irConsts[0] = kp_ir;
-  irConsts[1] = ki_ir;
-  irConsts[2] = kd_ir;
+  irConsts[0] = P;
+  irConsts[1] = I;
+  irConsts[2] = D;
 }
 
 void PID::setGyroPID(double P, double I, double D)
 {
-  gyroConsts[0] = kp_gyro;
-  gyroConsts[1] = ki_gyro;
-  gyroConsts[2] = kd_gyro;
+  gyroConsts[0] = P;
+  gyroConsts[1] = I;
+  gyroConsts[2] = D;
+}
+
+void PID::calcMotorsPID()
+{
+
 }

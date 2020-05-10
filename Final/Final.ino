@@ -17,9 +17,9 @@
 #define KI_GYRO 0.0
 #define KD_GYRO 0.0
 
-#define KP_MOTORS = 18.0;
-#define KI_MOTORS = 1.5;
-#define KD_MOTORS = 0.0;
+#define KP_MOTORS 18.0;
+#define KI_MOTORS 1.5;
+#define KD_MOTORS 0.0;
 
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6
@@ -103,12 +103,13 @@ void driveState(){
   {
     case STOP:
       Drive(0, 0);
-        if(proxSensors.readBasicFront()){ //wait for remote control
-          timer.Start(1000);              //wait to get out of the way (more important with button)
-          state = DRIVE;
-        }
-        else{
-          state = STOP;
+
+      if(proxSensors.readBasicFront()){ //wait for remote control
+        timer.Start(1000);              //wait to get out of the way (more important with button)
+        state = DRIVE;
+      }
+      else{
+        state = STOP;
      }
     break;
 
@@ -123,52 +124,51 @@ void driveState(){
      break;
 
      case WALL:
-          Drive(wallLeft, wallRight);     //drive based on wall PID
-          if(line.Detect() || proxSensors.readBasicFront()){ //if it detects line or remote (kept making escape attempts)
-            state = TURN1;
-          }
-          else{
-            state = WALL;
-          }
+        Drive(wallLeft, wallRight);     //drive based on wall PID
+        if(line.Detect() || proxSensors.readBasicFront()){ //if it detects line or remote (kept making escape attempts)
+          state = TURN1;
+        }
+        else{
+          state = WALL;
+        }
       break;
 
       case TURN1:
-      filter.GyroPID(LeftSpeed, RightSpeed, turnError, Angle);  //read gyro here to initialize bias
-      Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
+        filter.GyroPID(LeftSpeed, RightSpeed, turnError, Angle);  //read gyro here to initialize bias
+        Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
 
-          if (filter.doneTurning()){ //use a range to stop turning
-            if(line.Align(lineLeft, lineRight)){
-              state = LINE;
-            }
+        if (filter.doneTurning()){ //use a range to stop turning
+          if(line.Align(lineLeft, lineRight)){
+            state = LINE;
+          }
             Drive(lineLeft, lineRight);
-          }
-          else{
-            state = TURN1;
-          }
+        }else{
+          state = TURN1;
+        }
        break;
 
        case LINE:
-       line.LinePID(lineLeft, lineRight, baseSpeed - 20);
-       Drive(lineLeft, lineRight);
-       if (proxSensors.readBasicFront()){
-        state = TURN2;
-       }
-       else{
-        state = LINE;
-       }
+         line.LinePID(lineLeft, lineRight, baseSpeed - 20);
+         Drive(lineLeft, lineRight);
+         if (proxSensors.readBasicFront()){
+          state = TURN2;
+         }
+         else{
+          state = LINE;
+         }
        break;
 
       case TURN2:
-      filter.GyroPID(LeftSpeed, RightSpeed, turnError, 270);  //read gyro here to initialize bias
-      Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
+        filter.GyroPID(LeftSpeed, RightSpeed, turnError, 270);  //read gyro here to initialize bias
+        Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
 
-          if (filter.doneTurning()){ //use a range to stop turning
-            state = STOP;
-          }
-          else{
-            state = TURN2;
-          }
-       break;
+        if (filter.doneTurning()){ //use a range to stop turning
+          state = STOP;
+        }
+        else{
+          state = TURN2;
+        }
+      break;
 
   }
 }
