@@ -2,7 +2,14 @@
 
 Robot* Robot::instance = 0;
 
-Robot::Robot() {}
+Robot::Robot() {
+    timer = new EventTimer();
+    ir = new SharpIR();
+    speed = new SpeedControl(); //TODO: remove once PID is fully implemented
+    pid = new PID();
+
+    //TODO: Init() classes that have Inits
+}
 
 Robot *Robot::getRobot() {
     if(!instance)
@@ -47,11 +54,17 @@ bool runStateMachine() {
             break;
         case TURN_LEFT_90:
             if(/*Done turning*/) {
-                currentState++;
+                if(line.Align(pid->getLineLeftEffort(), pid->getLineRightEffort())) {
+                    currentState++;
+                }
             }
             break;
         case LINE_FOLLOW:
-            if(/*Received IR signal*/) {
+            pid->linePID();
+
+            speed->setTargetSpeeds(pid->getLineLeftEffort(), pid->getLineRightEffort());
+
+            if(proxSensors.readBasicFront()) {
                 currentState++;
             }
             break;

@@ -2,6 +2,7 @@
 #define _ROBOT_H
 
 #include "EventTimer.h"
+#include "PID.h"
 
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable
@@ -25,10 +26,10 @@ private:
     void updateSensors();
     bool runStateMachine();
 
-    EventTimer timer;
-    SharpIR ir;
-    SpeedControl speed;
-    LineFollowing line;
+    EventTimer *timer;
+    SharpIR *ir;
+    SpeedControl *speed;
+    LineFollowing *line;
 
     Zumo32U4Motors motors;
     Zumo32U4Encoders encoders;
@@ -36,7 +37,9 @@ private:
     Zumo32U4ProximitySensors proxSensors;
     Zumo32U4LCD lcd;
 
-    ComplementaryFilter filter;
+    ComplementaryFilter *filter;
+
+    PID *pid;
 
 public:
     static Robot *getRobot();
