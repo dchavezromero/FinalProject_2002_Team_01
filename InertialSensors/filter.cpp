@@ -117,7 +117,13 @@ float ComplementaryFilter::Average(float estimateAngle) {
     n = 0;
   }
 
-  return (Average[0] + Average[1] + Average[2] + Average[3] + Average[4] + Average[5] + Average[6]) / 7;
+  float sum;
+
+  for(int j = 0; j < 7; j++) {
+      sum += Average[j];
+  }
+
+  return sum / 7;
 }
 
 /*
