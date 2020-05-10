@@ -2,19 +2,15 @@
 #include "arduino.h"
 #include <Zumo32U4Motors.h>
 
-  SpeedControl::SpeedControl(float P, float I, float D){
+SpeedControl::SpeedControl(){}
+
+SpeedControl::setSpeedPID(double P, double I, double D){
   Kp = P;
   Ki = I;
   Kd = D;
- }
+}
 
- SpeedControl::SpeedControl(){
-  Kp = 18;
-  Ki = 1.5;
-  Kd = 0;
- }
-
- SpeedControl::Init(){
+SpeedControl::Init(){
   noInterrupts();
   TCCR4A = 0x00; //disable some functionality -- no need to worry about this
   TCCR4B = 0x0C; //sets the prescaler -- look in the handout for values
@@ -24,37 +20,35 @@
   OCR4C = 0X6C;  //TOP goes in OCR4C //I picked 107?
   TIMSK4 = 0x04; //enable overflow interrupt
   interrupts();
- }
+}
 
+SpeedControl::speedPID(int16_t countsLeft, int16_t countsRight,int targetLeft,int targetRight){
+noInterrupts();
+speedLeft = countsLeft - prevLeft;
+speedRight = countsRight - prevRight;
 
+prevLeft = countsLeft;
+prevRight = countsRight;
+interrupts();
 
- SpeedControl::speedPID(int16_t countsLeft, int16_t countsRight,int targetLeft,int targetRight){
-  noInterrupts();
-  speedLeft = countsLeft - prevLeft;
-  speedRight = countsRight - prevRight;
+errorLeft = targetLeft - speedLeft;
+sumLeft += errorLeft;
+errorRight = targetRight - speedRight;
+sumRight += errorRight;
 
-  prevLeft = countsLeft;
-  prevRight = countsRight;
-  interrupts();
+if(sumLeft>= 200){
+   sumLeft = 200;
+   sumRight = 200;
+}
 
-  errorLeft = targetLeft - speedLeft;
-  sumLeft += errorLeft;
-  errorRight = targetRight - speedRight;
-  sumRight += errorRight;
+float effortLeft = Kp * errorLeft + Ki * sumLeft;
+float effortRight = Kp * errorRight + Ki * sumRight;
 
-  if(sumLeft>= 200){
-     sumLeft = 200;
-     sumRight = 200;
-  }
+motors.setSpeeds(effortLeft, effortRight); //up to you to add the right motor
 
-  float effortLeft = Kp * errorLeft + Ki * sumLeft;
-  float effortRight = Kp * errorRight + Ki * sumRight;
-
-  motors.setSpeeds(effortLeft, effortRight); //up to you to add the right motor
-
- }
+}
 
 SpeedControl::setTargetSpeeds(int targetLeft, int targetRight) {
-    targetLeftSpeed = targetLeft;
-    targetRightSpeed = targetRight;
+  targetLeftSpeed = targetLeft;
+  targetRightSpeed = targetRight;
 }

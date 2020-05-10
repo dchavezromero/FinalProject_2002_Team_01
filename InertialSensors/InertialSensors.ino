@@ -21,8 +21,8 @@ void setup() {
 
 void loop() {
 
- 
- Ready = filter.CalcAngle(gyro, prediction, axis); 
+
+ Ready = filter.CalcAngle(gyro, prediction, axis);
 
   if (Ready){
     lcd.clear();
@@ -32,7 +32,7 @@ void loop() {
     else {
     lcd.print(filter.Average(prediction));
     }
-    
+
     lcd.gotoXY(0, 1);
     if (axis == 0){
       lcd.print("Yaw");
@@ -44,7 +44,7 @@ void loop() {
       lcd.print("Roll");
     }
   }
-  
+
 if (buttonC.getSingleDebouncedPress()){
   if (axis < 2){
     axis++;
@@ -57,6 +57,6 @@ if (buttonC.getSingleDebouncedPress()){
   if (buttonB.getSingleDebouncedPress()){
     bFlag = !bFlag;
   }
-  
-   
+
+
 }

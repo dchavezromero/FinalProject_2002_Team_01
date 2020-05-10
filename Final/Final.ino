@@ -9,6 +9,18 @@
 #include <SpeedControl.h>       //include Speed PID control
 #include <LineFollowing.h>      //include line following
 
+#define KP_IR 0.05
+#define KI_IR 0.05
+#define KP_IR -6.00
+
+#define KP_GYRO 0.2
+#define KI_GYRO 0.0
+#define KD_GYRO 0.0
+
+#define KP_MOTORS = 18.0;
+#define KI_MOTORS = 1.5;
+#define KD_MOTORS = 0.0;
+
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6
 SpeedControl Speed;       //creates a speed PID with default constants
@@ -63,8 +75,10 @@ void setup()
   lineSensors.initThreeSensors();     //initializes the line sensors
   proxSensors.initFrontSensor();      //initializes front proximity sensor/remote control
   line.Init();
-  Sharp.setIRPID(0.05, 0.05, -6);
-  filter.setGyroPID(0.2, 0.0, 0);
+  Sharp.setIRPID(KP_IR, KI_IR, KP_IR);
+  filter.setGyroPID(KP_GYRO, KI_GYRO, KD_GYRO);
+  speed.setSpeedPID(KP_MOTORS, KI_MOTORS, KD_MOTORS);
+
 }
 
 
@@ -124,7 +138,7 @@ void driveState(){
 
           if (filter.doneTurning()){ //use a range to stop turning
             if(line.Align(lineLeft, lineRight)){
-              state = LINE;      
+              state = LINE;
             }
             Drive(lineLeft, lineRight);
           }
