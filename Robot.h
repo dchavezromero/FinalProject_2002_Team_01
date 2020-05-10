@@ -1,8 +1,16 @@
 #ifndef _ROBOT_H
 #define _ROBOT_H
 
+#include <Arduino.h>
 #include "EventTimer.h"
 #include "PID.h"
+
+#define WHEEL_TRACK 8.5 //Distance between wheels in CM
+#define TICKS_TO_CM 1 //TODO: Find this value
+
+#define PIVOT_CIRCUMFERENCE PI*WHEEL_TRACK
+
+#define PIVOT_SPEED 100
 
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable
@@ -15,7 +23,7 @@ private:
         WALL_FOLLOW,
         TURN_LEFT_90,
         LINE_FOLLOW,
-        TURN_LEFT_90_2,
+        TURN_RIGHT_90,
         DRIVE_UP_RAMP,
         SPIN_360,
         STOP,
@@ -41,6 +49,13 @@ private:
 
     PID *pid;
 
+    bool onRamp = false; //Whether or not we've reached the ramp in the DRIVE_UP_RAMP state
+
+    int16_t countsLeftOffset = 0; //Used to "reset" the values of the encoders
+    int16_t countsRightOffset = 0;
+
+    void resetEncoderOffset();
+
 public:
     static Robot *getRobot();
 
@@ -50,6 +65,8 @@ public:
     bool readyToPid = false;
     int16_t countsLeft = 0;
     int16_t countsRight = 0;
+
+    float getDegreesTurned();
 };
 
 #endif

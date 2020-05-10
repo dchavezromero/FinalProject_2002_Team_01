@@ -9,12 +9,7 @@
 #define READING_TO_DPS (8.75 * 1000) //Sensitivity * 1000 (mdps -> dps)
 
 class ComplementaryFilter {
-public:
-    LSM303 accel;
-    L3G gyro;
-    Zumo32U4Motors motors;
-    //Zumo32U4ButtonA buttonA;
-
+private:
     int LastMillis;           //used in CalcAngle to get DeltaT
     int dt;               //change in time to change gyro d/s to Degrees
     double k = .8;            //tune filter towards gyro vs accelerometer
@@ -41,14 +36,22 @@ public:
     double LastAngle = 0;       //used to find the angle and work multiplle time in a row
     bool doneTurn = false;   //changes to true when the error is within 2 degrees
 
+    float currentAngle = 0; //The current calculated value from CalcAngle()
+public:
+    LSM303 accel;
+    L3G gyro;
+    Zumo32U4Motors motors;
+    //Zumo32U4ButtonA buttonA;
 
     Init(void);
-    bool CalcAngle(float& Gyro, float& prediction, int axis);
+    bool CalcAngle(float& Gyro, float& prediction);
     float Average(float prediction);
     Read(void);
     void setGyroPID(double P, double I, double D);
     float GyroPID(float& LeftEffort, float&RightEffort, float& turnError, double angle);
-    boolean doneTurning();
+    bool doneTurning();
+
+    float getCurrentAngle();
 };
 
 

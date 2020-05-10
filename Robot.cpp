@@ -31,7 +31,7 @@ void updateSensors() {
 bool runStateMachine() {
     switch(currentState) {
         case STARTUP:
-            speed->setTargetSpeeds(0, 0);
+            pid->setSpeedTargets(0, 0);
 
             //If we detect an IR signal
             if(proxSensors.readBasicFront()) {
@@ -40,20 +40,24 @@ bool runStateMachine() {
             }
             break;
         case WAIT_1S:
-            speed->setTargetSpeeds(0, 0);
+            pid->setSpeedTargets(0, 0);
             if(timer->CheckExpired()) {
                 currentState++;
             }
             break;
         case WALL_FOLLOW:
-            speed->setTargetSpeeds(ir->getLeftEffort(), ir->getRightEffort());
+            pid->setSpeedTargets(ir->getLeftEffort(), ir->getRightEffort());
 
             if(line.Detect() || proxSensors.readBasicFront()) {
+                resetEncoderOffset();
                 currentState++;
             }
             break;
         case TURN_LEFT_90:
-            if(/*Done turning*/) {
+            pid->setSpeedTargets(PIVOT_SPEED, -PIVOT_SPEED);
+
+            if(getDegreesTurned() > 90) {
+                //TODO: Make sure we're updating speed targets so that the pivot speeds get overwritten when trying to acquire the line
                 if(line.Align(pid->getLineLeftEffort(), pid->getLineRightEffort())) {
                     currentState++;
                 }
@@ -65,16 +69,19 @@ bool runStateMachine() {
             speed->setTargetSpeeds(pid->getLineLeftEffort(), pid->getLineRightEffort());
 
             if(proxSensors.readBasicFront()) {
+                resetEncoderOffset();
                 currentState++;
             }
             break;
-        case TURN_LEFT_90_2:
-            //Same as TURN_LEFT_90
-            if(/*Done turning*/) {
+        case TURN_RIGHT_90:
+            pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
+
+            if(getDegreesTurned() < -90) {
                 currentState++;
             }
             break;
         case DRIVE_UP_RAMP:
+            if(filter->getCurrentAngle())
             if(/*Sitting on flat ground after driving up ramp*/) {
                 currentState++;
             }
@@ -92,6 +99,23 @@ bool runStateMachine() {
     }
 
     return false;
+}
+
+void Robot::resetEncoderOffset() {
+    countsLeftOffset = countsLeft;
+    countsRightOffset = countsRight;
+}
+
+float Robot::getDegreesTurned() {
+    int dLeft = currentLeft - countsLeftOffset; //How much we've turned since the last reset
+    int dRight = currentRight - countsRightOffset;
+
+    int avgTurned = abs((-dLeft + dRight)/2);
+
+    //Calculate what percentage of the circle we've spun, then multiply by 360 to calculate degrees turned
+    float degreesTurned = (PIVOT_CIRCUMFERENCE / (avgTurned * TICKS_TO_CM)) * 360;
+
+    return degreesTurned;
 }
 
 /*

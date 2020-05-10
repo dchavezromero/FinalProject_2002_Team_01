@@ -47,83 +47,43 @@ ComplementaryFilter::Init(void) {
   estimate angle is the angle through the filter
   axis is what axis its reading (0 for yaw, 1 for pitch, 2 for roll)
 */
-bool ComplementaryFilter::CalcAngle(float& gyroAngle, float& estimateAngle, int axis) {
-  this->Read();
+bool ComplementaryFilter::CalcAngle(float& gyroAngle, float& estimateAngle) {
+    accel.read();
+    gyro.read();
 
-  /*if (buttonA.getSingleDebouncedPress()) { //resets what is considered 0 degrees
+    /*if (buttonA.getSingleDebouncedPress()) { //resets what is considered 0 degrees
     i = 1;
     accYoffset = 0;
     accZoffset = 0;
     accXoffset = 0;
-}*/
+    }*/
 
-  uint16_t StatusA = accel.readReg(LSM303::STATUS_A);
-  int Ready = bitRead(StatusA, 3);
+    uint16_t StatusA = accel.readReg(LSM303::STATUS_A);
+    int Ready = bitRead(StatusA, 3);
 
-  gyro.read();
-  //yaw
-  if (axis == 0) {
+    //If we haven't iterated 200 times,
     if (i < 200) {
-      accYoffset = ((accYoffset * (i - 1))  + accel.a.y) / i;
-      i++;
+        accYoffset = ((accYoffset * (i - 1))  + accel.a.y) / i;
+        i++;
     }
+
     observedAngle = atan2(-(accel.a.y - accYoffset), accel.a.x) * RAD_TO_DEG;
     gyro_dps = gyro.g.z / READING_TO_DPS;
-  }
-
-  //pitch
-  if (axis == 1) {
-    if (i < 200) {
-      accXoffset = ((accXoffset * (i - 1))  + accel.a.x) / i;
-      i++;
-    }
-    observedAngle = atan2(-(accel.a.x - accXoffset), accel.a.z) * RAD_TO_DEG;
-    gyro_dps = gyro.g.y / READING_TO_DPS;
-  }
-
-  //roll
-  else if (axis == 2) {
-    if (i < 200) {
-      accZoffset = ((accZoffset * (i - 1))  + accel.a.z) / i;
-      i++;
-    }
-    observedAngle = atan2(-(accel.a.z - accZoffset), accel.a.y) * RAD_TO_DEG;
-    gyro_dps = gyro.g.x / READING_TO_DPS;
-  }
 
 
-  dt = (millis() - LastMillis) / 1000; //dT in seconds
-  LastMillis = millis(); //update last time
-  this->prediction +=  dt * (gyro_dps - gyroBias);
-  gyroAngle += dt * gyro_dps;
+    dt = (millis() - LastMillis) / 1000; //dT in seconds
+    LastMillis = millis(); //update last time
+    this->prediction +=  dt * (gyro_dps - gyroBias);
+    gyroAngle += dt * gyro_dps;
 
-  gyroBias += E * (prediction - observedAngle);
+    gyroBias += E * (prediction - observedAngle);
 
-  estimateAngle = k * (prediction) + (1 - k) * observedAngle;
+    estimateAngle = k * (prediction) + (1 - k) * observedAngle;
 
-  //TODO: Figure out what Dom meant to do here
-  return (Ready && 1);
-}
+    currentAngle = estimateAngle;
 
-
-/*
-   smoothes out the readings a bit more
-*/
-float ComplementaryFilter::Average(float estimateAngle) {
-  float Average[7];
-  Average[n] = estimateAngle;
-  n++;
-  if (n == 7) {
-    n = 0;
-  }
-
-  float sum;
-
-  for(int j = 0; j < 7; j++) {
-      sum += Average[j];
-  }
-
-  return sum / 7;
+    //TODO: Figure out what Dom meant to do here
+    return (Ready && 1);
 }
 
 /*
@@ -170,9 +130,6 @@ float ComplementaryFilter::GyroPID(float& LeftEffort, float&RightEffort, float& 
   double turnChange = lastTurnError - turnError;
   lastTurnError = turnError;
 
-  lcd.clear();
-  lcd.println(turnError);
-
   double Effort = Kp * turnError + Ki * turnSum + Kd * turnChange;
 
 
@@ -195,6 +152,10 @@ float ComplementaryFilter::GyroPID(float& LeftEffort, float&RightEffort, float& 
 }
 
 //returns true when the error is within 2 degrees
-boolean ComplementaryFilter::doneTurning() {
+bool ComplementaryFilter::doneTurning() {
   return doneTurn;
+}
+
+float ComplementaryFilter::getCurrentAngle() {
+    return currentAngle;
 }
