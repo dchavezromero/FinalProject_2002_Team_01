@@ -22,18 +22,18 @@ public:
   double kp_ir, double ki_ir, double kd_ir,
   double kp_gyro, double ki_gyro, double kd_gyro);
 
+  void calcMotorsPID();
   void calcIRPID();
   void calcGyroPID();
-  void calcWallPID();
 
   void setMotorsPID(double P, double I, double D);
   void setIRPID(double P, double I, double D);
   void setGyroPID(double P, double I, double D);
 
-
+  void getMotorEfforts(float &left, float &right);
   void getIREfforts(float &left, float &right);
   void getGyroEfforts(float &left, float &right);
-  void getWallEfforts(float &left, float &right);
+
 
 };
 
