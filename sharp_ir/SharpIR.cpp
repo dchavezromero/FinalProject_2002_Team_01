@@ -11,7 +11,7 @@ SharpIR::SharpIR(){
   IRPin = A6;
 }
 
-//converts the IR reading into a distance 
+//converts the IR reading into a distance
 //most accurate around 18 cm and drifts a little around 10 cm from there
 float SharpIR::Distance(float& Dist){
   if (timer.CheckExpired()){
@@ -33,25 +33,28 @@ SharpIR::setIRPID(double P, double I, double D){
 //does PID control for the distance from the wall
 //Left Effort and Right Effort are motor speeds
 //wallError is how far away from target distance it thinks it is
-//distance is how far away from the wall you want it to be 
+//distance is how far away from the wall you want it to be
 //base speed is generally how fast it will move forward
 float SharpIR::IRPID(float& LeftEffort, float&RightEffort, float& wallError, double distance, double baseSpeed){
   float dist;
   this->Distance(dist);
   wallError = distance - dist;
   wallSum = this->rollingSum(wallError);
-  
+
   double wallChange = lastWallError - wallError;
   lastWallError = wallError;
-  
-  double Effort = Kp *wallError + Ki * wallSum + Kd * wallChange;
-  
-    LeftEffort = baseSpeed - Effort;
-    RightEffort = baseSpeed + Effort;
+
+  double effort = Kp *wallError + Ki * wallSum + Kd * wallChange;
+
+    /*LeftEffort = baseSpeed - Effort;
+    RightEffort = baseSpeed + Effort;*/
+
+    leftEffort = baseSpeed - effort;
+    rightEffort = baseSpeed + effort;
   }
 
 
-//The I term of the PID needed to be limited so this adds up the past ten values 
+//The I term of the PID needed to be limited so this adds up the past ten values
   double SharpIR::rollingSum(float error){
     sumWall[i] = error;
     i++;
@@ -61,4 +64,12 @@ float SharpIR::IRPID(float& LeftEffort, float&RightEffort, float& wallError, dou
     double sumWallError = sumWall[0] + sumWall[1] + sumWall[2] + sumWall[3] + sumWall[4] +
      sumWall[5] + sumWall[6] + sumWall[7] + sumWall[8] + sumWall[9];
   return sumWallError;
+}
+
+float SharpIR::getLeftEffort() {
+    return leftEffort;
+}
+
+float SharpIR::getRightEffort() {
+    return rightEffort;
 }

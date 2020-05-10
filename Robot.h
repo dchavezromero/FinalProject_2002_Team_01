@@ -1,6 +1,8 @@
 #ifndef _ROBOT_H
 #define _ROBOT_H
 
+#include "EventTimer.h"
+
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable
 private:
@@ -8,6 +10,7 @@ private:
 
     enum StateMachine {
         STARTUP,
+        WAIT_1S,
         WALL_FOLLOW,
         TURN_LEFT_90,
         LINE_FOLLOW,
@@ -21,11 +24,29 @@ private:
 
     void updateSensors();
     bool runStateMachine();
+
+    EventTimer timer;
+    SharpIR ir;
+    SpeedControl speed;
+    LineFollowing line;
+
+    Zumo32U4Motors motors;
+    Zumo32U4Encoders encoders;
+    Zumo32U4LineSensors lineSensors;
+    Zumo32U4ProximitySensors proxSensors;
+    Zumo32U4LCD lcd;
+
+    ComplementaryFilter filter;
+
 public:
     static Robot *getRobot();
 
     void init();
     bool loop();
+
+    bool readyToPid = false;
+    int16_t countsLeft = 0;
+    int16_t countsRight = 0;
 };
 
 #endif

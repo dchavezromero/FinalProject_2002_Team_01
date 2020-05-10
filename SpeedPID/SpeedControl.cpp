@@ -26,7 +26,7 @@
   interrupts();
  }
 
- 
+
 
  SpeedControl::speedPID(int16_t countsLeft, int16_t countsRight,int targetLeft,int targetRight){
   noInterrupts();
@@ -41,15 +41,20 @@
   sumLeft += errorLeft;
   errorRight = targetRight - speedRight;
   sumRight += errorRight;
-    
+
   if(sumLeft>= 200){
      sumLeft = 200;
      sumRight = 200;
   }
-    
+
   float effortLeft = Kp * errorLeft + Ki * sumLeft;
   float effortRight = Kp * errorRight + Ki * sumRight;
 
   motors.setSpeeds(effortLeft, effortRight); //up to you to add the right motor
 
  }
+
+SpeedControl::setTargetSpeeds(int targetLeft, int targetRight) {
+    targetLeftSpeed = targetLeft;
+    targetRightSpeed = targetRight;
+}

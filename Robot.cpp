@@ -24,12 +24,24 @@ void updateSensors() {
 bool runStateMachine() {
     switch(currentState) {
         case STARTUP:
-            if(/*C button pressed*/) {
+            speed->setTargetSpeeds(0, 0);
+
+            //If we detect an IR signal
+            if(proxSensors.readBasicFront()) {
+                timer.Start(1000);
+                currentState++;
+            }
+            break;
+        case WAIT_1S:
+            speed->setTargetSpeeds(0, 0);
+            if(timer->CheckExpired()) {
                 currentState++;
             }
             break;
         case WALL_FOLLOW:
-            if(/*Line detected*/) {
+            speed->setTargetSpeeds(ir->getLeftEffort(), ir->getRightEffort());
+
+            if(line.Detect() || proxSensors.readBasicFront()) {
                 currentState++;
             }
             break;
@@ -67,4 +79,19 @@ bool runStateMachine() {
     }
 
     return false;
+}
+
+/*
+ * ISR for timing. Basically, raise a flag on overflow. Timer4 is set up to run with a pre-scaler
+ * of 1024 and TOP is set to 249. Clock is 16 MHz, so interval is dT = (1024 * 250) / 16 MHz = 16 ms.
+ */
+ISR(TIMER4_OVF_vect)
+{
+    Robot *robot = Robot::getInstance();
+
+    //Capture a "snapshot" of the encoder counts for later processing
+    robot->countsLeft = encoders.getCountsLeft();
+    robot->countsRight = encoders.getCountsRight();
+
+    robot->readyToPID = true;
 }

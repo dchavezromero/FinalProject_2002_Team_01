@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <Zumo32U4.h>
 
-#include <button.h>             //include the button class 
+#include <button.h>             //include the button class
 #include <EventTimer.h>         //include the event timer
 #include <SharpIR.h>            //include the IR
 #include <filter.h>             //include IMU
@@ -11,11 +11,11 @@
 
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6
-SpeedControl Speed;       //creates a speed PID with default constants 
+SpeedControl Speed;       //creates a speed PID with default constants
 LineFollowing line;       //creates a line following with default threshold
 
 Zumo32U4Motors motors;
-Zumo32U4Encoders encoders;   
+Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4ProximitySensors proxSensors;
 Zumo32U4LCD lcd;
@@ -69,13 +69,13 @@ void setup()
 
 
 
-void loop() {  
+void loop() {
   if(readyToPID){
     //clear the timer flag
     readyToPID = 0;
     Speed.speedPID(countsLeft, countsRight, targetLeft, targetRight); //drive/update speedPID
   }
-   
+
   Sharp.IRPID(wallLeft, wallRight, wallError, TargetDist, baseSpeed); //update wall PID
   driveState();                                                       //state machine
   filter.CalcAngle(gyro, prediction, axis);                           //update IMU
@@ -84,7 +84,7 @@ void loop() {
 
 
 void driveState(){
- 
+
   switch(state)
   {
     case STOP:
@@ -121,8 +121,8 @@ void driveState(){
       case TURN1:
       filter.GyroPID(LeftSpeed, RightSpeed, turnError, Angle);  //read gyro here to initialize bias
       Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
-          
-          if (filter.doneTurning()){ //use a range to stop turning 
+
+          if (filter.doneTurning()){ //use a range to stop turning
             if(line.Align(lineLeft, lineRight)){
               state = LINE;      
             }
@@ -147,28 +147,28 @@ void driveState(){
       case TURN2:
       filter.GyroPID(LeftSpeed, RightSpeed, turnError, 270);  //read gyro here to initialize bias
       Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
-          
+
           if (filter.doneTurning()){ //use a range to stop turning
-            state = STOP;    
+            state = STOP;
           }
           else{
             state = TURN2;
           }
        break;
-    
+
   }
 }
 
 
 //sets the target speads for the speed PID and updates line sensors
-void Drive(int Left, int Right){  
+void Drive(int Left, int Right){
       targetLeft = Left;
-      targetRight = Right;  
+      targetRight = Right;
 }
 
 
 /*
- * ISR for timing. Basically, raise a flag on overflow. Timer4 is set up to run with a pre-scaler 
+ * ISR for timing. Basically, raise a flag on overflow. Timer4 is set up to run with a pre-scaler
  * of 1024 and TOP is set to 249. Clock is 16 MHz, so interval is dT = (1024 * 250) / 16 MHz = 16 ms.
  */
 ISR(TIMER4_OVF_vect)
