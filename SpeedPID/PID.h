@@ -8,30 +8,35 @@
 class PID {
 
 private:
-  double motorConsts[3] = {0, 0, 0};
-  double irConsts[3] = {0, 0, 0};
+  double speedConsts[3] = {0, 0, 0};
+  double wallConsts[3] = {0, 0, 0};
   double gyroConsts[3] = {0, 0, 0};
 
-  SpeedControl speed;
   SharpIR sharp;
   LineFollowing line;
 
-public:
-  PID(SharpIR *this_sharp, SpeedControl *this_speed, LineFollowing *this_line,
-  double kp_motors, double ki_motors, double kd_motors,
-  double kp_ir, double ki_ir, double kd_ir,
-  double kp_gyro, double ki_gyro, double kd_gyro);
+  float effortLeft = 0;
+  float effortRight = 0;
 
-  void calcMotorsPID();
-  void calcIRPID();
+  int16_t targetLeft = 0;
+  int16_t targetRight = 0;
+
+
+public:
+  PID(SharpIR *this_sharp, LineFollowing *this_line);
+
+  void calcSpeedPID(int16_t countsLeft, int16_t countsRight);
+  void calcWallPID();
   void calcGyroPID();
 
-  void setMotorsPID(double P, double I, double D);
-  void setIRPID(double P, double I, double D);
+  void setSpeedTargets(int16_t targetLeftSpeed, int16_t targetRightSpeed);
+
+  void setSpeedPID(double P, double I, double D);
+  void setWallPID(double P, double I, double D);
   void setGyroPID(double P, double I, double D);
 
-  void getMotorEfforts(float &left, float &right);
-  void getIREfforts(float &left, float &right);
+  void getSpeedEfforts(float &left, float &right);
+  void getWallEfforts(float &left, float &right);
   void getGyroEfforts(float &left, float &right);
 
 
