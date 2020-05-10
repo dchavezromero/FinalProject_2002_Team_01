@@ -13,7 +13,7 @@ SharpIR::SharpIR(){
 
 //converts the IR reading into a distance
 //most accurate around 18 cm and drifts a little around 10 cm from there
-float SharpIR::Distance(float& Dist){
+float SharpIR::getDistance(float& Dist){
   if (timer.CheckExpired()){
     timer.Start(waitingTime);
     val = analogRead(IRPin);

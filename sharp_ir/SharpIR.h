@@ -24,7 +24,7 @@ public:
 
     SharpIR(uint8_t pin);
     SharpIR();
-    float Distance(float& Dist);
+    float getDistance(float& Dist);
     setIRPID(double P, double I, double D);
     float IRPID(float& LeftEffort, float&RightEffort, float& wallError,double distance, double baseSpeed);
     double rollingSum(float error);

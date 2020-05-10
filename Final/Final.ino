@@ -26,6 +26,7 @@ SharpIR Sharp;            //sets up IR with default pin A6
 SpeedControl Speed;       //creates a speed PID with default constants
 LineFollowing line;       //creates a line following with default threshold
 
+
 Zumo32U4Motors motors;
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
@@ -102,7 +103,7 @@ void driveState(){
   switch(state)
   {
     case STOP:
-      Drive(0, 0);
+      Speed.setTargetSpeeds(0, 0);
 
       if(proxSensors.readBasicFront()){ //wait for remote control
         timer.Start(1000);              //wait to get out of the way (more important with button)
@@ -115,7 +116,7 @@ void driveState(){
 
     case DRIVE:
         if(timer.CheckExpired()){         //dont go until timer is done
-          Drive(baseSpeed, baseSpeed);    //just start moving (possiblly execive)
+          Speed.setTargetSpeeds(baseSpeed, baseSpeed);    //just start moving (possiblly execive)
           state = WALL;
         }
         else{
@@ -124,7 +125,7 @@ void driveState(){
      break;
 
      case WALL:
-        Drive(wallLeft, wallRight);     //drive based on wall PID
+        Speed.setTargetSpeeds(wallLeft, wallRight);     //drive based on wall PID
         if(line.Detect() || proxSensors.readBasicFront()){ //if it detects line or remote (kept making escape attempts)
           state = TURN1;
         }
@@ -135,13 +136,13 @@ void driveState(){
 
       case TURN1:
         filter.GyroPID(LeftSpeed, RightSpeed, turnError, Angle);  //read gyro here to initialize bias
-        Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
+        Speed.setTargetSpeeds(LeftSpeed,RightSpeed);                              //drive based on gyro PID
 
         if (filter.doneTurning()){ //use a range to stop turning
           if(line.Align(lineLeft, lineRight)){
             state = LINE;
           }
-            Drive(lineLeft, lineRight);
+            Speed.setTargetSpeeds(lineLeft, lineRight);
         }else{
           state = TURN1;
         }
@@ -149,7 +150,7 @@ void driveState(){
 
        case LINE:
          line.LinePID(lineLeft, lineRight, baseSpeed - 20);
-         Drive(lineLeft, lineRight);
+         Speed.setTargetSpeeds(lineLeft, lineRight);
          if (proxSensors.readBasicFront()){
           state = TURN2;
          }
@@ -160,7 +161,7 @@ void driveState(){
 
       case TURN2:
         filter.GyroPID(LeftSpeed, RightSpeed, turnError, 270);  //read gyro here to initialize bias
-        Drive(LeftSpeed,RightSpeed);                              //drive based on gyro PID
+        Speed.setTargetSpeeds(LeftSpeed,RightSpeed);                              //drive based on gyro PID
 
         if (filter.doneTurning()){ //use a range to stop turning
           state = STOP;
@@ -174,11 +175,11 @@ void driveState(){
 }
 
 
-//sets the target speads for the speed PID and updates line sensors
-void Drive(int Left, int Right){
-      targetLeft = Left;
-      targetRight = Right;
-}
+// //sets the target speads for the speed PID and updates line sensors
+// void Drive(int Left, int Right){
+//       targetLeft = Left;
+//       targetRight = Right;
+// }
 
 
 /*
