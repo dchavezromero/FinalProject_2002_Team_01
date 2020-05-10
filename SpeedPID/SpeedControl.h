@@ -10,8 +10,8 @@ private:
 public:
     Zumo32U4Motors motors;
 
-    float Kp = 18;
-    float Ki = 1.5;
+    float Kp = 0;
+    float Ki = 0;
     float Kd = 0;
 
     float targetLeft = 0;
@@ -32,7 +32,7 @@ public:
     int16_t errorLeft = 0;
     int16_t errorRight = 0;
 
-    SpeedControl(float P, float I, float D);
+    setSpeedPID(double P, double I, double D);
     SpeedControl();
 
     void Init();
