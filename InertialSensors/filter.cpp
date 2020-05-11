@@ -63,12 +63,12 @@ bool ComplementaryFilter::CalcAngle(float& gyroAngle, float& estimateAngle) {
 
     //If we haven't iterated 200 times,
     if (i < 200) {
-        accYoffset = ((accYoffset * (i - 1))  + accel.a.y) / i;
-        i++;
+      accXoffset = ((accXoffset * (i - 1))  + compass.a.x) / i;
+      i++;
     }
 
-    observedAngle = atan2(-(accel.a.y - accYoffset), accel.a.x) * RAD_TO_DEG;
-    gyro_dps = gyro.g.z / READING_TO_DPS;
+    observedAngle = atan2(-(compass.a.x - accXoffset), compass.a.z) * RAD_TO_DEG;
+    gyro_dps = gyro.g.y / READING_TO_DPS;
 
 
     dt = (millis() - LastMillis) / 1000; //dT in seconds
