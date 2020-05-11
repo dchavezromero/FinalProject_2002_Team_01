@@ -117,8 +117,8 @@ bool LineFollowing::isParallel(void)
 //adjusts slowly to try to align the center sensor to the line
 bool LineFollowing::doAlign(float leftEffort, float rightEffort){
 
-    pid->calcLinePID(leftEffort, rightEffort, 10);
-
+    pid->calcLinePID(leftEffort, rightEffort, BASE_LINE_FOLLOW_SPEED);  
+    
     if (leftEffort == 0 && rightEffort == 0){
         return true;
     }
@@ -131,7 +131,7 @@ bool LineFollowing::doAlignAlong(float leftEffort, float rightEffort){
 
   parallel = true;
 
-  pid->calcLinePID(leftEffort, rightEffort, 10);
+  pid->calcLinePID(leftEffort, rightEffort, BASE_LINE_FOLLOW_SPEED);  
 
   if (leftEffort == 0 && rightEffort == 0){
     parallel = false;
