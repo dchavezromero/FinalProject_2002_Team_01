@@ -100,8 +100,10 @@ void PID::calcWallPID()
 
     runningWallAvg = 0;
 
-    // double wallChange = lastWallError - wallError; TODO: implement derivate term
-    // lastWallError = wallError;
+    if(currWallIndex == wallSampleSize){ //if buffer is full
+      currWallIndex = 0; //reset index to dynamically update error entries
+      wallIterFlag = true; //set flag to true
+    }
 
     double effort = wallConsts[0] * wallError + wallConsts[1] * runningWallAvg + wallConsts[2] * wallDerivativeError;
 
