@@ -11,6 +11,7 @@ void LineFollowing::Init(PID *thisPid) {
 
     lineSensors.initThreeSensors();
     proxSensors.initFrontSensor();
+    proxSensors.pullupsOn();
 }
 
 
@@ -21,7 +22,20 @@ void LineFollowing::update(void) {
 
 //should detect when the remote sends a signal
 bool LineFollowing::detectIR(void) {
-  return proxSensors.readBasicFront();
+    //TODO: MAKE SURE THIS ISNT A BUG
+    bool detected = false;
+
+    proxSensors.lineSensorEmittersOff();
+    detected = proxSensors.readBasicFront();
+
+    //This is sorcery. lineSensorsEmittersOn() does not exist in the Zumo32U4 library
+    //  so we had to reverse engineer the hacker 4-chan to figure out how to turn the
+    //  emitters back on
+    digitalWrite(22, HIGH);
+    pinMode(22, INPUT_PULLUP);
+    delayMicroseconds(578);
+
+    return detected;
 }
 
 
