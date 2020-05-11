@@ -31,8 +31,16 @@ Robot *Robot::getRobot() {
 bool Robot::loop() {
     updateSensors();
 
-    pid->calcSpeedPID(countsLeft, countsRight);
-    //  motors.setSpeeds(pid->getLeftSpeedEffort(), pid->getRightSpeedEffort());
+    if(readyToPID) {
+        lcd.clear();
+        lcd.print(ir->getDistance());
+
+        pid->calcSpeedPID(countsLeft, countsRight);
+
+        readyToPID = false;
+    }
+
+    motors.setSpeeds(pid->getLeftSpeedEffort(), pid->getRightSpeedEffort());
 
     return runStateMachine();
 }
