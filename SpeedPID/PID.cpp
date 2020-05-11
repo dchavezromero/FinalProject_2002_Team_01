@@ -105,3 +105,11 @@ float PID::getLeftLineEffort() {
 float PID::getRightLineEffort() {
     return rightLineEffort;
 }
+
+float PID::getLeftWallEffort() {
+    return leftWallEffort;
+}
+
+float PID::getRightWallEffort() {
+    return rightWallEffort;
+}
