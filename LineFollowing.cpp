@@ -48,6 +48,12 @@ bool LineFollowing::detectLine(void) {
   Serial.print("Detected left line: ");
   Serial.print(detectLeft);
   Serial.print("\t");
+  Serial.print("Detected center line: ");
+  Serial.print(detectCenter);
+  Serial.print("\t");
+  Serial.print("Detected right line: ");
+  Serial.print(detectRight);
+  Serial.println("");
 
 return (detectLeft || detectCenter || detectRight);
 }
