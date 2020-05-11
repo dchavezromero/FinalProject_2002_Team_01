@@ -17,9 +17,9 @@
 #define KI_GYRO 0.0
 #define KD_GYRO 0.0
 
-#define KP_SPEED 18.0;
-#define KI_SPEED 1.5;
-#define KD_SPEED 0.0;
+#define KP_SPEED 18.0
+#define KI_SPEED 1.5
+#define KD_SPEED 0.0
 
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6

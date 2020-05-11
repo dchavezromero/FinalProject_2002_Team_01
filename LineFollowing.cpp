@@ -16,7 +16,7 @@ void LineFollowing::Init(PID *thisPid) {
 
 //update the line sensors(doing the IR was giving a lot of noise)
 void LineFollowing::update(void) {
-   lineSensors.read(lineSensorValues)
+   lineSensors.read(lineSensorValues);
 }
 
 //should detect when the remote sends a signal
@@ -26,10 +26,12 @@ bool LineFollowing::detectIR(void) {
 
 
 //set the values based on if it detected a line
-void LineFollowing::detectLine(void) {
+bool LineFollowing::detectLine(void) {
   detectLeft = (lineSensorValues[0] > LIGHT_THRESHOLD);
   detectCenter = (lineSensorValues[1] > LIGHT_THRESHOLD);
   detectRight = (lineSensorValues[2] > LIGHT_THRESHOLD);
+
+return (detectLeft || detectCenter || detectRight);
 }
 
 /*

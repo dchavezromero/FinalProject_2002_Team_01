@@ -106,10 +106,10 @@ void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float
   lineEffortRight = thisLineEffortRight;
 
   if (line->isParallel()){
-    lineError = line->getPositionAlongLine(lineEffortLeft, lineEffortRight);
+    lineError = line->getPositionAlongLine();
   }
   else{
-    lineError = line->getPosition(lineEffortLeft, lineEffortRight);
+    lineError = line->getPosition();
   }
 
   if(currlineIndex >= 10)
@@ -125,21 +125,25 @@ void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float
 
   lineSum = lineSum / currlineIndex;
 
-  double lineDiff = lastError - lineError;
+  double lineDiff = lastlineError - lineError;
   lastlineError = lineError;
 
-  if (error > 0){
+  if (lineError > 0){
     lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
     lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) + (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
   }
-  else if (error < 0){
+  else if (lineError < 0){
     lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) - (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
     lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
   }
-    else if(error == 0){
+    else if(lineError == 0){
       lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
       lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
   }
+}
+
+void PID::updateCurrentBaseSpeed(float baseSpeedModifier) {
+  currentBaseSpeed = currentBaseSpeed - baseSpeedModifier;
 }
 
 float PID::getLeftLineEffort() {
@@ -148,6 +152,10 @@ float PID::getLeftLineEffort() {
 
 float PID::getRightLineEffort() {
     return lineEffortRight;
+}
+
+float PID::getCurrentBaseSpeed() {
+    return currentBaseSpeed;
 }
 
 float PID::getLeftWallEffort() {

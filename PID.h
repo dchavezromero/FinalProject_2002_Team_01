@@ -10,6 +10,8 @@
 
 #define TARGET_DISTANCE 30
 
+class LineFollowing;
+
 class PID {
 private:
   double speedConsts[3] = {0, 0, 0};
@@ -29,6 +31,7 @@ private:
   double lineIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
   double lastlineError = 0;   //used to calculate the D term in IRPID
   char currlineIndex = 0; //used to reference integral windup buffer
+  float currentBaseSpeed = BASE_LINE_FOLLOW_SPEED;
 
   SharpIR *sharp;
   LineFollowing *line;
@@ -58,15 +61,14 @@ public:
   void setWallPID(double P, double I, double D);
   void setLinePID(double P, double I, double D);
 
-  void getSpeedEfforts(float &left, float &right);
-  void getWallEfforts(float &left, float &right);
-  void getLineEfforts(float &left, float &right);
-
   float getLeftWallEffort();
   float getRightWallEffort();
 
   float getLeftLineEffort();
   float getRightLineEffort();
+  float getCurrentBaseSpeed();
+
+  void updateCurrentBaseSpeed(float baseSpeedModifier);
 };
 
 #endif
