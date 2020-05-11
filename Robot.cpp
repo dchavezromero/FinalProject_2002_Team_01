@@ -41,6 +41,7 @@ bool Robot::loop() {
 
     if(readyToWallPID) {
         pid->calcWallPID();
+        line->update();
 
         readyToWallPID = false;
     }
