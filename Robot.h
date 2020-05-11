@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "EventTimer.h"
-#include "PID.h"
+#include "SpeedPID/PID.h"
 
 #define WHEEL_TRACK 8.5 //Distance between wheels in CM
 #define TICKS_TO_CM 1 //TODO: Find this value
@@ -31,12 +31,13 @@ private:
 
     enum StateMachine currentState = STARTUP;
 
+    void incrementState();
+
     void updateSensors();
     bool runStateMachine();
 
     EventTimer *timer;
     SharpIR *ir;
-    SpeedControl *speed;
     LineFollowing *line;
 
     Zumo32U4Motors motors;

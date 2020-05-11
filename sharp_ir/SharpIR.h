@@ -1,5 +1,5 @@
 #include "arduino.h"
-#include <EventTimer.h>
+#include "../EventTimer.h"
 
 #ifndef _SHARPIR_H
 #define _SHARPIR_H

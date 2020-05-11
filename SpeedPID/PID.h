@@ -1,9 +1,9 @@
 #ifndef _PID_H
 #define _PID_H
 
-#include <SharpIR.h>            //include the IR
-#include <filter.h>             //include IMU
-#include <SpeedControl.h>       //include Speed PID control
+#include "../sharp_ir/SharpIR.h"            //include the IR
+#include "../InertialSensors/filter.h"             //include IMU
+#include "../linefollowing/LineFollowing.h"
 
 class PID {
 
@@ -12,14 +12,19 @@ private:
   double wallConsts[3] = {0, 0, 0};
   double gyroConsts[3] = {0, 0, 0};
 
-  SharpIR sharp;
-  LineFollowing line;
+  SharpIR *sharp;
+  LineFollowing *line;
 
   float effortLeft = 0;
   float effortRight = 0;
 
   int16_t targetLeft = 0;
   int16_t targetRight = 0;
+
+  float leftWallEffort = 0;
+  float rightWallEffort = 0;
+
+  float leftLineEffort = 0;
 
 
 public:
@@ -39,7 +44,11 @@ public:
   void getWallEfforts(float &left, float &right);
   void getGyroEfforts(float &left, float &right);
 
+  float getLeftWallEffort();
+  float getRightWallEffort();
 
+  float getLeftLineEffort();
+  float getRightLineEffort();
 };
 
 #endif

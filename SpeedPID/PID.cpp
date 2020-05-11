@@ -88,3 +88,11 @@ void PID::calcWallPID()
     leftEffort = baseSpeed - effort;
     rightEffort = baseSpeed + effort;
 }
+
+float PID::getLeftWallEffort() {
+    return leftWallEffort;
+}
+
+float PID::getRightWallEffort() {
+    return rightWallEffort;
+}
