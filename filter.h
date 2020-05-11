@@ -10,7 +10,7 @@
 
 class ComplementaryFilter {
 private:
-    int LastMillis;           //used in CalcAngle to get DeltaT
+    unsigned long LastMillis;           //used in CalcAngle to get DeltaT
     int dt;               //change in time to change gyro d/s to Degrees
     double k = .8;            //tune filter towards gyro vs accelerometer
     float prediction;         //gyro angle prediction
@@ -44,7 +44,7 @@ public:
     //Zumo32U4ButtonA buttonA;
 
     Init(void);
-    bool CalcAngle(float& Gyro, float& prediction);
+    bool CalcAngle();
     float Average(float prediction);
     Read(void);
     void setGyroPID(double P, double I, double D);

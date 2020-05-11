@@ -4,7 +4,7 @@
 #include "arduino.h"
 #include "EventTimer.h"
 
-#define ADC_TO_VOUT (5 / 1024) //2^10 (10 bit microntroller)
+#define ADC_TO_VOUT (5.0 / 1024.0) //2^10 (10 bit microntroller)
 #define MAGIC_NUM_ONE 95.9972 //TODO: figure out where these came from
 #define MAGIC_NUM_TWO 0.315141
 

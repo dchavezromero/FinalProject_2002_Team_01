@@ -4,6 +4,7 @@
 //can change what pin it reads
 SharpIR::SharpIR(uint8_t thisPin = A6){
   pin = thisPin;
+  pinMode(pin, INPUT);
   timer = new EventTimer();
 }
 
