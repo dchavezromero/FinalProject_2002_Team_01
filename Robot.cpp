@@ -15,6 +15,8 @@ Robot::Robot() {
 
     lcd.clear();
     lcd.print("STARTUP");
+
+    setupEncoderTimer();
 }
 
 Robot *Robot::getRobot() {
@@ -26,6 +28,8 @@ Robot *Robot::getRobot() {
 
 bool Robot::loop() {
     updateSensors();
+
+    pid->calcSpeedPID(countsLeft, countsRight);
 
     return runStateMachine();
 }
@@ -40,7 +44,7 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(0, 0);
 
             //If we detect an IR signal
-            if(proxSensors.readBasicFront()) {
+            if(line->detectIR()) {
                 timer->Start(1000);
                 incrementState();
 
@@ -63,6 +67,9 @@ bool Robot::runStateMachine() {
                 resetEncoderOffset();
                 incrementState();
             }*/
+
+
+
             break;
         case TURN_LEFT_90:
             pid->setSpeedTargets(PIVOT_SPEED, -PIVOT_SPEED);
@@ -79,7 +86,7 @@ bool Robot::runStateMachine() {
 
             pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
-            if(proxSensors.readBasicFront()) {
+            if(line->detectIR()) {
                 resetEncoderOffset();
                 incrementState();
             }
@@ -134,13 +141,25 @@ float Robot::getDegreesTurned() {
     int avgTurned = abs((-dLeft + dRight)/2); //TODO: Make not abs()
 
     //Calculate what percentage of the circle we've spun, then multiply by 360 to calculate degrees turned
-    float degreesTurned = (PIVOT_CIRCUMFERENCE / (avgTurned * TICKS_TO_CM)) * 360;
+    float degreesTurned = (PIVOT_CIRCUMFERENCE / (avgTurned / TICKS_TO_CM)) * 360;
 
     return degreesTurned;
 }
 
 Zumo32U4Encoders Robot::getEncoders() {
     return encoders;
+}
+
+void Robot::setupEncoderTimer() {
+    noInterrupts();
+    TCCR4A = 0x00; //disable some functionality -- no need to worry about this
+    TCCR4B = 0x0C; //sets the prescaler -- look in the handout for values
+    TCCR4C = 0x04; //toggles pin 6 at one-half the timer frequency
+    TCCR4D = 0x00; //normal mode
+
+    OCR4C = 0X6C;  //TOP goes in OCR4C //I picked 107?
+    TIMSK4 = 0x04; //enable overflow interrupt
+    interrupts();
 }
 
 /*

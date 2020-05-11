@@ -9,11 +9,11 @@
 #include "filter.h"
 
 #define WHEEL_TRACK 8.5 //Distance between wheels in CM
-#define TICKS_TO_CM 1 //TODO: Find this value
+#define TICKS_TO_CM 50.5 //TODO: Find this value
 
 #define PIVOT_CIRCUMFERENCE PI*WHEEL_TRACK
 
-#define PIVOT_SPEED 100
+#define PIVOT_SPEED 75
 
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable
@@ -46,7 +46,6 @@ private:
     Zumo32U4Motors motors;
     Zumo32U4Encoders encoders;
     Zumo32U4LineSensors lineSensors;
-    Zumo32U4ProximitySensors proxSensors;
     Zumo32U4LCD lcd;
 
     ComplementaryFilter *filter;
@@ -59,6 +58,8 @@ private:
     int16_t countsRightOffset = 0;
 
     void resetEncoderOffset();
+
+    void setupEncoderTimer();
 
 public:
     static Robot *getRobot();

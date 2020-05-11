@@ -10,6 +10,18 @@
 
 #define TARGET_DISTANCE 30
 
+#define KP_IR 0.05
+#define KI_IR 0.05
+#define KD_IR -6.00
+
+#define KP_GYRO 0.2
+#define KI_GYRO 0.0
+#define KD_GYRO 0.0
+
+#define KP_SPEED 18.0
+#define KI_SPEED 1.5
+#define KD_SPEED 0.0
+
 class LineFollowing;
 
 class PID {

@@ -7,10 +7,10 @@ PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
 
   //TODO: default to pulling from params.h
 
-  // speedConsts[0] = kp_motors;
-  // speedConsts[1] = ki_motors;
-  // speedConsts[2] = kd_motors;
-  //
+  speedConsts[0] = KP_SPEED;
+  speedConsts[1] = KI_SPEED;
+  speedConsts[2] = KD_SPEED;
+
   // irConsts[0] = kp_ir;
   // irConsts[1] = ki_ir;
   // irConsts[2] = kd_ir;
