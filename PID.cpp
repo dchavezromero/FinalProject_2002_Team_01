@@ -62,25 +62,13 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
   int16_t errorRight = targetRight - speedRight;
   sumRight += errorRight;
 
-  /*if(sumLeft >= 200){
+  if(sumLeft >= 200){
      sumLeft = 200;
      sumRight = 200;
- }*/
-
-   Serial.print(targetLeft);
-   Serial.print("\t");
-   Serial.print(errorLeft);
-   Serial.print("\t");
-   Serial.print(prevLeft);
-   Serial.print("\t");
-   Serial.print(sumLeft);
-   Serial.print("\t");
+ }
 
   speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
   speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
-
-  Serial.print(speedEffortLeft);
-  Serial.print("\n");
 }
 
 void PID::calcWallPID()
@@ -97,7 +85,7 @@ void PID::calcWallPID()
     lastWallPosition = sharp->getDistance();
 
     //calculate integral error
-    wallSum -= wallIntegralSum[currWallIndex];
+    /*wallSum -= wallIntegralSum[currWallIndex];
     wallIntegralSum[currWallIndex] = wallError;
     wallSum += wallError;
     currWallIndex = (currWallIndex + 1) % wallSampleSize;
@@ -108,7 +96,9 @@ void PID::calcWallPID()
         runningWallAvg = wallSum / wallSampleSize;
         currWallIndex = 0;
         wallIterFlag = true;
-    }
+    }*/
+
+    runningWallAvg = 0;
 
     // double wallChange = lastWallError - wallError; TODO: implement derivate term
     // lastWallError = wallError;

@@ -42,8 +42,8 @@ private:
   unsigned long dtWall = 0;
   bool wallIterFlag = false;
 
-  unsigned int sumLeft = 0;
-  unsigned int sumRight = 0;
+  int sumLeft = 0;
+  int sumRight = 0;
 
   int16_t prevLeft = 0;
   int16_t prevRight = 0;
