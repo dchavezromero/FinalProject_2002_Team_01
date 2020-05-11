@@ -34,7 +34,6 @@ bool Robot::loop() {
     if(readyToPID) {
         filter->CalcAngle();
         pid->calcSpeedPID(countsLeft, countsRight);
-        pid->calcWallPID();
 
         readyToPID = false;
     }
@@ -51,9 +50,9 @@ void Robot::updateSensors() {
 bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
-            Serial.println(filter->getCurrentAngle());
-            lcd.clear();
-            lcd.print(filter->getCurrentAngle());
+            //Serial.println(filter->getCurrentAngle());
+            //lcd.clear();
+            //lcd.print(filter->getCurrentAngle());
 
             pid->setSpeedTargets(0, 0);
 
@@ -76,14 +75,14 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
             }*/
 
-            //pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
+            pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
             if(/*getDegreesTurned() > 90*/ false) {
                 lcd.clear();
                 lcd.print("YAY");
