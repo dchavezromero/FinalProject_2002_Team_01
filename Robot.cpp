@@ -84,6 +84,8 @@ bool Robot::runStateMachine() {
                 incrementState();
             }*/
 
+            //line->detectLine();
+
             //pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
             if(/*getDegreesTurned() > 90*/ false) {
                 lcd.clear();

@@ -2,8 +2,8 @@
 
 PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
 {
-  this_sharp = sharp;
-  this_line = line;
+  sharp = this_sharp;
+  line = this_line;
 
   //TODO: default to pulling from params.h
 
@@ -81,6 +81,7 @@ void PID::calcWallPID()
 
     //caculate error
     float wallError = TARGET_DISTANCE - sharp->getDistance();
+    Serial.println(wallError);
 
     //calculate derivate error
     wallDerivativeError = (lastWallPosition - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
@@ -98,6 +99,11 @@ void PID::calcWallPID()
         runningWallAvg = wallSum / wallSampleSize;
         currWallIndex = 0;
         wallIterFlag = true;
+    }
+
+    if(currWallIndex == wallSampleSize){ //if buffer is full
+      currWallIndex = 0; //reset index to dynamically update error entries
+      wallIterFlag = true; //set flag to true
     }
 
     // double wallChange = lastWallError - wallError; TODO: implement derivate term
