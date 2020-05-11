@@ -47,7 +47,7 @@ ComplementaryFilter::Init(void) {
   estimate angle is the angle through the filter
   axis is what axis its reading (0 for yaw, 1 for pitch, 2 for roll)
 */
-bool ComplementaryFilter::CalcAngle(float& gyroAngle, float& estimateAngle) {
+bool ComplementaryFilter::CalcAngle() {
     accel.read();
     gyro.read();
 
@@ -73,14 +73,11 @@ bool ComplementaryFilter::CalcAngle(float& gyroAngle, float& estimateAngle) {
 
     dt = (millis() - LastMillis) / 1000; //dT in seconds
     LastMillis = millis(); //update last time
-    this->prediction +=  dt * (gyro_dps - gyroBias);
-    gyroAngle += dt * gyro_dps;
+    currentAngle += dt * (gyro_dps - gyroBias);
 
-    gyroBias += E * (prediction - observedAngle);
+    currentAngle = k * (currentAngle) + (1 - k) * observedAngle;
 
-    estimateAngle = k * (prediction) + (1 - k) * observedAngle;
-
-    currentAngle = estimateAngle;
+    gyroBias += E * (currentAngle - observedAngle);
 
     //TODO: Figure out what Dom meant to do here
     return (Ready && 1);

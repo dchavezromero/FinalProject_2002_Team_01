@@ -32,9 +32,7 @@ bool Robot::loop() {
     updateSensors();
 
     if(readyToPID) {
-        lcd.clear();
-        lcd.print(ir->getDistance());
-
+        filter->CalcAngle();
         pid->calcSpeedPID(countsLeft, countsRight);
 
         readyToPID = false;
@@ -52,7 +50,9 @@ void Robot::updateSensors() {
 bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
-            getDegreesTurned();
+            Serial.println(filter->getCurrentAngle());
+            lcd.clear();
+            lcd.print(filter->getCurrentAngle());
 
             pid->setSpeedTargets(0, 0);
 
@@ -82,8 +82,8 @@ bool Robot::runStateMachine() {
                 incrementState();
             }*/
 
-            pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
-            if(getDegreesTurned() > 90) {
+            pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
+            if(/*getDegreesTurned() > 90*/ false) {
                 lcd.clear();
                 lcd.print("YAY");
                 pid->setSpeedTargets(0, 0);
@@ -118,11 +118,17 @@ bool Robot::runStateMachine() {
             }
             break;
         case DRIVE_UP_RAMP:
-            if(filter->getCurrentAngle() > 10 && !onRamp) {
+            pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
+
+            if(filter->getCurrentAngle() < -20 && !onRamp) {
+                lcd.clear();
+                lcd.print("ON RAMP");
                 onRamp = true;
             }
 
-            if(onRamp && filter->getCurrentAngle() < 10) {
+            if(onRamp && abs(filter->getCurrentAngle()) < 10) {
+                lcd.clear();
+                lcd.print("SPINNING");
                 resetEncoderOffset();
                 incrementState();
             }
@@ -130,7 +136,10 @@ bool Robot::runStateMachine() {
         case SPIN_360:
             pid->setSpeedTargets(PIVOT_SPEED, -PIVOT_SPEED);
 
+            Serial.println(getDegreesTurned());
+
             if(getDegreesTurned() > 360) {
+                pid->setSpeedTargets(0, 0);
                 incrementState();
             }
             break;
@@ -164,14 +173,6 @@ float Robot::getDegreesTurned() {
     float cmTraveled = (avgTurned / TICKS_TO_CM);
     double pctCircle = cmTraveled / PIVOT_CIRCUMFERENCE;
     float degreesTurned = pctCircle * 360;
-
-    Serial.print(cmTraveled);
-    Serial.print("\t");
-    Serial.print(PIVOT_CIRCUMFERENCE);
-    Serial.print("\t");
-    Serial.print(pctCircle);
-    Serial.print("\t");
-    Serial.println(degreesTurned);
 
     return degreesTurned;
 }
