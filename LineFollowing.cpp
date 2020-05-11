@@ -46,12 +46,21 @@ bool LineFollowing::detectLine(void) {
   detectRight = (lineSensorValues[2] > LIGHT_THRESHOLD);
 
   Serial.print("Detected left line: ");
+  Serial.print("\t");
+  Serial.print(lineSensorValues[0]);
+  Serial.print("\t");
   Serial.print(detectLeft);
-  Serial.print("\t");
+  Serial.println("");
   Serial.print("Detected center line: ");
-  Serial.print(detectCenter);
   Serial.print("\t");
+  Serial.print(lineSensorValues[1]);
+  Serial.print("\t");
+  Serial.print(detectCenter);
+  Serial.println("");
   Serial.print("Detected right line: ");
+  Serial.print("\t");
+  Serial.print(lineSensorValues[2]);
+  Serial.print("\t");
   Serial.print(detectRight);
   Serial.println("");
 

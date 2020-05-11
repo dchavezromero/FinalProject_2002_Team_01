@@ -36,6 +36,7 @@ bool Robot::loop() {
 
         pid->calcSpeedPID(countsLeft, countsRight);
         pid->calcWallPID();
+        line->update();
 
         readyToPID = false;
     }
