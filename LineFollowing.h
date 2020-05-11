@@ -8,6 +8,8 @@
 
 #define LIGHT_THRESHOLD 1000
 
+class PID;
+
 class LineFollowing {
 
 private:
@@ -25,9 +27,9 @@ private:
 
 
 public:
-  LineFollowing(PID *thisPID);
+  LineFollowing();
 
-  void initLineFollowing(void);
+  void Init(PID *thiPid);
   void update(void);
   void detectLine(void);
 

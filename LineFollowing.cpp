@@ -2,40 +2,41 @@
 #include "arduino.h"
 
 //allows to change the line sensor threshold
-LineFollowing::LineFollowing(PID *thisPID){
-  pid = thisPID;
+LineFollowing::LineFollowing() {
 }
 
 //initiate the line sensor and proximity sensor
-void LineFollowing::initLineFollowing(void){
-  lineSensors.initThreeSensors();
-  proxSensors.initFrontSensor();
+void LineFollowing::Init(PID *thisPid) {
+    pid = thisPid;
+
+    lineSensors.initThreeSensors();
+    proxSensors.initFrontSensor();
 }
 
 
 //update the line sensors(doing the IR was giving a lot of noise)
-void LineFollowing::update(void){
+void LineFollowing::update(void) {
    lineSensors.read(lineSensorValues)
 }
 
 //should detect when the remote sends a signal
-bool LineFollowing::detectIR(void){
+bool LineFollowing::detectIR(void) {
   return proxSensors.readBasicFront();
 }
 
 
 //set the values based on if it detected a line
-void LineFollowing::detectLine(void){
-  DetectLeft = (lineSensorValues[0] > LIGHT_THRESHOLD);
-  DetectCenter =(lineSensorValues[1] > LIGHT_THRESHOLD);
-  DetectRight =(lineSensorValues[2] > LIGHT_THRESHOLD);
+void LineFollowing::detectLine(void) {
+  detectLeft = (lineSensorValues[0] > LIGHT_THRESHOLD);
+  detectCenter = (lineSensorValues[1] > LIGHT_THRESHOLD);
+  detectRight = (lineSensorValues[2] > LIGHT_THRESHOLD);
 }
 
 /*
  * declares values to the position of the line based on what sensors can see it
  * with the line being centered as zero
  */
-double LineFollowing::getPosition(void){
+double LineFollowing::getPosition(void) {
   this->detectLine();
 
   if(detectLeft && !detectCenter && !detectRight){

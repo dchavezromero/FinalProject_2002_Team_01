@@ -10,7 +10,7 @@ Robot::Robot() {
     filter = new ComplementaryFilter();
 
     //TODO: Init() classes that have Inits
-    line->Init();
+    line->Init(pid);
     filter->Init();
 }
 
@@ -51,7 +51,7 @@ bool Robot::runStateMachine() {
         case WALL_FOLLOW:
             pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
-            if(line->Detect() || proxSensors.readBasicFront()) {
+            if(line->detectLine() || proxSensors.readBasicFront()) {
                 resetEncoderOffset();
                 incrementState();
             }

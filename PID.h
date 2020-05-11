@@ -11,7 +11,6 @@
 #define TARGET_DISTANCE 30
 
 class PID {
-
 private:
   double speedConsts[3] = {0, 0, 0};
   double wallConsts[3] = {0, 0, 0};
@@ -51,7 +50,7 @@ public:
 
   void calcSpeedPID(int16_t countsLeft, int16_t countsRight);
   void calcWallPID();
-  void calcLinePID();
+  void calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float baseSpeedModifier);
 
   void setSpeedTargets(int16_t targetLeftSpeed, int16_t targetRightSpeed);
 
