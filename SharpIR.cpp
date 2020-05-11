@@ -4,13 +4,14 @@
 //can change what pin it reads
 SharpIR::SharpIR(uint8_t thisPin = A6){
   pin = thisPin;
+  timer = new EventTimer();
 }
 
 //converts the IR reading into a distance
 //most accurate around 18 cm and drifts a little around 10 cm from there
 float SharpIR::getDistance(void){
-    if (timer.CheckExpired()){
-        timer.Start(waitingTime);
+    if (timer->CheckExpired()){
+        timer->Start(waitingTime);
         val = analogRead(pin);
     }
 

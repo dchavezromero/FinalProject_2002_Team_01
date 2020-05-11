@@ -12,7 +12,7 @@ class SharpIR {
 private:
     int val = 0;
 public:
-    EventTimer timer;                 //nonblocking timer for when to read
+    EventTimer *timer;                 //nonblocking timer for when to read
     uint8_t pin = A6;                   //default IR pin
     unsigned int waitingTime = 50;    //millis between readings
 
