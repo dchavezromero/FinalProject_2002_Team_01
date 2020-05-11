@@ -11,7 +11,7 @@
 
 #define KP_IR 0.05
 #define KI_IR 0.05
-#define KP_IR -6.00
+#define KD_IR -6.00
 
 #define KP_GYRO 0.2
 #define KI_GYRO 0.0

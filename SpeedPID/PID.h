@@ -1,9 +1,12 @@
 #ifndef _PID_H
 #define _PID_H
 
-#include "../sharp_ir/SharpIR.h"            //include the IR
-#include "../InertialSensors/filter.h"             //include IMU
-#include "../linefollowing/LineFollowing.h"
+#include <SharpIR.h>            //include the IR
+#include <filter.h>             //include IMU
+#include <SpeedControl.h>       //include Speed PID control
+
+#define BASE_WALL_FOLLOW_SPEED 30
+#define TARGET_DISTANCE 30
 
 class PID {
 
@@ -12,20 +15,26 @@ private:
   double wallConsts[3] = {0, 0, 0};
   double gyroConsts[3] = {0, 0, 0};
 
-  SharpIR *sharp;
-  LineFollowing *line;
+  double wallIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
+  double lastWallError = 0;   //used to calculate the D term in IRPID
+  uint4_t currIndex = 0; //used to reference integral windup buffer
 
-  float effortLeft = 0;
-  float effortRight = 0;
+
+  SharpIR sharp;
+  LineFollowing line;
 
   int16_t targetLeft = 0;
   int16_t targetRight = 0;
 
-  float leftWallEffort = 0;
-  float rightWallEffort = 0;
+  float speedEffortLeft = 0;
+  float speedEffortRight = 0;
 
-  float leftLineEffort = 0;
-  float rightLineEffort = 0;
+  float lineEffortLeft = 0;
+  float lineEffortRight = 0;
+
+  float wallEffortLeft = 0;
+  float wallEffortRight = 0;
+
 
 public:
   PID(SharpIR *this_sharp, LineFollowing *this_line);
@@ -44,11 +53,7 @@ public:
   void getWallEfforts(float &left, float &right);
   void getGyroEfforts(float &left, float &right);
 
-  float getLeftWallEffort();
-  float getRightWallEffort();
 
-  float getLeftLineEffort();
-  float getRightLineEffort();
 };
 
 #endif

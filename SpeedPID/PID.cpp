@@ -5,7 +5,7 @@ PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
   this_sharp = sharp;
   this_line = line;
 
-  //TODO default to pulling from params.h
+  //TODO: default to pulling from params.h
 
   // speedConsts[0] = kp_motors;
   // speedConsts[1] = ki_motors;
@@ -66,35 +66,36 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
      sumRight = 200;
    }
 
-  effortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
-  effortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
+  speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
+  speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
 }
 
 void PID::calcWallPID()
 {
-  float dist;
-  this->Distance(dist);
-  wallError = distance - dist;
-  wallSum = this->rollingSum(wallError);
+  double wallSum = 0;
 
-  double wallChange = lastWallError - wallError;
-  lastWallError = wallError;
+  double wallError = TARGET_DISTANCE - sharp.getDistance();
 
-  double effort = Kp *wallError + Ki * wallSum + Kd * wallChange;
+  if(currIndex >= 10)
+    currIndex = 0;
 
-    /*LeftEffort = baseSpeed - Effort;
-    RightEffort = baseSpeed + Effort;*/
+  wallIntegralSum[currIndex] = wallError;
+  currIndex++;
 
-    leftEffort = baseSpeed - effort;
-    rightEffort = baseSpeed + effort;
-}
+  for(uint4_t i = 0, i < 10, i++)
+  {
+    wallSum += wallIntegralSum[i];
+  }
 
-float PID::getLeftWallEffort() {
-    return leftWallEffort;
-}
+  wallSum = wallSum / currIndex;
 
-float PID::getRightWallEffort() {
-    return rightWallEffort;
+  // double wallChange = lastWallError - wallError; TODO: implement derivate term
+  // lastWallError = wallError;
+
+  double effort = wallConsts[0] * wallError + wallConsts[1] * wallSum;
+
+  wallEffortLeft = BASE_WALL_FOLLOW_SPEED - effort;
+  wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
 }
 
 float PID::getLeftLineEffort() {
