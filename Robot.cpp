@@ -35,6 +35,7 @@ bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
             pid->setSpeedTargets(0, 0);
+            lcd.print("STARTUP");
 
             //If we detect an IR signal
             if(proxSensors.readBasicFront()) {
