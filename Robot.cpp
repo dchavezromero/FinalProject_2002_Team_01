@@ -38,9 +38,9 @@ bool Robot::loop() {
     if(readyToPID) {
         filter->CalcAngle();
 
-        Serial.println(pid->getLeftSpeedEffort());
+        //Serial.println(pid->getLeftSpeedEffort());
         pid->calcSpeedPID(countsLeft, countsRight);
-        Serial.println(pid->getLeftSpeedEffort());
+        //Serial.println(pid->getLeftSpeedEffort());
 
         readyToPID = false;
     }

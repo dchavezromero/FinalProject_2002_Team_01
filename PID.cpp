@@ -62,15 +62,25 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
   int16_t errorRight = targetRight - speedRight;
   sumRight += errorRight;
 
-  if(sumLeft >= 200){
+  /*if(sumLeft >= 200){
      sumLeft = 200;
      sumRight = 200;
-   }
+ }*/
 
-   //Serial.println(errorLeft);
+   Serial.print(targetLeft);
+   Serial.print("\t");
+   Serial.print(errorLeft);
+   Serial.print("\t");
+   Serial.print(prevLeft);
+   Serial.print("\t");
+   Serial.print(sumLeft);
+   Serial.print("\t");
 
   speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
   speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
+
+  Serial.print(speedEffortLeft);
+  Serial.print("\n");
 }
 
 void PID::calcWallPID()
@@ -90,7 +100,7 @@ void PID::calcWallPID()
     wallSum -= wallIntegralSum[currWallIndex];
     wallIntegralSum[currWallIndex] = wallError;
     wallSum += wallError;
-    currWallIndex++;
+    currWallIndex = (currWallIndex + 1) % wallSampleSize;
 
     if(wallIterFlag == false) {
         runningWallAvg = wallSum / currWallIndex;
