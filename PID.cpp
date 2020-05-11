@@ -87,7 +87,7 @@ void PID::calcWallPID()
     lastWallPosition = sharp->getDistance();
 
     //calculate integral error
-    /*wallSum -= wallIntegralSum[currWallIndex];
+    wallSum -= wallIntegralSum[currWallIndex];
     wallIntegralSum[currWallIndex] = wallError;
     wallSum += wallError;
     currWallIndex = (currWallIndex + 1) % wallSampleSize;
@@ -98,7 +98,7 @@ void PID::calcWallPID()
         runningWallAvg = wallSum / wallSampleSize;
         currWallIndex = 0;
         wallIterFlag = true;
-    }*/
+    }
 
     runningWallAvg = 0;
 
