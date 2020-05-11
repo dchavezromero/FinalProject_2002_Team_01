@@ -35,12 +35,10 @@ bool Robot::loop() {
         filter->CalcAngle();
 
         pid->calcSpeedPID(countsLeft, countsRight);
+        pid->calcWallPID();
 
         readyToPID = false;
     }
-
-    pid->calcWallPID();
-
 
     motors.setSpeeds(pid->getLeftSpeedEffort(), pid->getRightSpeedEffort());
 
@@ -79,14 +77,14 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
             }*/
 
-            pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
+            //pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
             if(/*getDegreesTurned() > 90*/ false) {
                 lcd.clear();
                 lcd.print("YAY");
