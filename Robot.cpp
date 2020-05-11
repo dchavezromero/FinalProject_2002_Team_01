@@ -12,6 +12,9 @@ Robot::Robot() {
     //TODO: Init() classes that have Inits
     line->Init(pid);
     filter->Init();
+
+    lcd.clear();
+    lcd.print("STARTUP");
 }
 
 Robot *Robot::getRobot() {
@@ -35,27 +38,31 @@ bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
             pid->setSpeedTargets(0, 0);
-            lcd.print("STARTUP");
 
             //If we detect an IR signal
             if(proxSensors.readBasicFront()) {
                 timer->Start(1000);
                 incrementState();
+
+                lcd.clear();
+                lcd.print("WAIT_1S");
             }
             break;
         case WAIT_1S:
             pid->setSpeedTargets(0, 0);
             if(timer->CheckExpired()) {
+                lcd.clear();
+                lcd.print("WALL_FOLLOW");
                 incrementState();
             }
             break;
         case WALL_FOLLOW:
-            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
-            if(line->detectLine()) {
+            /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
-            }
+            }*/
             break;
         case TURN_LEFT_90:
             pid->setSpeedTargets(PIVOT_SPEED, -PIVOT_SPEED);
