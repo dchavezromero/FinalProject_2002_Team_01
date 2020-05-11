@@ -67,7 +67,7 @@ bool Robot::runStateMachine() {
             }
             break;
         case LINE_FOLLOW:
-            pid->linePID();
+            pid->calcLinePID();
 
             pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
@@ -120,8 +120,8 @@ void Robot::resetEncoderOffset() {
 }
 
 float Robot::getDegreesTurned() {
-    int dLeft = currentLeft - countsLeftOffset; //How much we've turned since the last reset
-    int dRight = currentRight - countsRightOffset;
+    int dLeft = countsLeft - countsLeftOffset; //How much we've turned since the last reset
+    int dRight = countsRight - countsRightOffset;
 
     int avgTurned = abs((-dLeft + dRight)/2); //TODO: Make not abs()
 
@@ -131,13 +131,18 @@ float Robot::getDegreesTurned() {
     return degreesTurned;
 }
 
+Zumo32U4Encoders Robot::getEncoders() {
+    return encoders;
+}
+
 /*
  * ISR for timing. Basically, raise a flag on overflow. Timer4 is set up to run with a pre-scaler
  * of 1024 and TOP is set to 249. Clock is 16 MHz, so interval is dT = (1024 * 250) / 16 MHz = 16 ms.
  */
 ISR(TIMER4_OVF_vect)
 {
-    Robot *robot = Robot::getInstance();
+    Robot *robot = Robot::getRobot();
+    Zumo32U4Encoders encoders = robot->getEncoders();
 
     //Capture a "snapshot" of the encoder counts for later processing
     robot->countsLeft = encoders.getCountsLeft();

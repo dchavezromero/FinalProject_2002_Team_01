@@ -68,6 +68,8 @@ public:
     int16_t countsRight = 0;
 
     float getDegreesTurned();
+
+    Zumo32U4Encoders getEncoders();
 };
 
 #endif
