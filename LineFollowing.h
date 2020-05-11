@@ -4,45 +4,40 @@
 #include <Arduino.h>
 #include <Zumo32U4.h>
 #include "EventTimer.h"
+#include "PID.h"
+
+#define LIGHT_THRESHOLD 1000
 
 class LineFollowing {
+
+private:
+  Zumo32U4LineSensors lineSensors;
+  Zumo32U4ProximitySensors proxSensors;
+  PID *pid;
+  uint16_t lineSensorValues[3] = {0, 0, 0};  //stores linesensor data
+  //stores if each of the line sensors see a line
+  bool detectLeft = false;
+  bool detectCenter = false;
+  bool detectRight = false;
+  bool parallel = false;      //used to switch between positioning error methods
+
+  double line = 0;            //position of the line
+
+
 public:
-    Zumo32U4LineSensors lineSensors;
-    Zumo32U4ProximitySensors proxSensors;
+  LineFollowing(PID *thisPID);
 
-    double Threshold = 1000;                    //light dark threshold
-    uint16_t lineSensorValues[3] = {0, 0, 0};  //stores linesensor data
+  void initLineFollowing(void);
+  void update(void);
+  void detectLine(void);
 
-    //stores if each of the line sensors see a line
-    bool DetectLeft = false;
-    bool DetectCenter = false;
-    bool DetectRight = false;
+  bool detectIR(void);
+  bool isParallel(void);
+  bool doAlign(float leftEffort, float rightEffort);
+  bool doAlignAlong(float leftEffort, float rightEffort);
 
-    double line = 0;            //position of the line
-    double lineSum = 0;         //used for I term
-    double sumLine[10];         //used to limit I term
-    int i = 0;                  //used to rotate through arrays terms
-    double lastError = 0;       //stores last error value for D term
-    bool parallel = false;      //used to switch between positioning error methods
-    double error = 0;           //initialized value
-
-    double Kp = 2;              //default P constant
-    double Ki = 0.0003;         //default I constant
-    double Kd = -.0001;         //default D constant
-
-    LineFollowing(double threshold);
-    LineFollowing();
-    Init();
-    Update();
-    bool DetectIR();
-    setLinePID(double P, double I, double D);
-    Detect();
-    int Position();
-    int PositionAlongLine();
-    bool Align(float LeftEffort, float RightEffort);
-    bool AlignAlong(float& LeftEffort, float& RightEffort);
-    float LinePID(float& LeftEffort, float& RightEffort,double basespeed);
-    Sum(int error);
+  double getPosition(void);
+  double getPositionAlongLine(void);
 };
 
 

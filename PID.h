@@ -6,6 +6,8 @@
 #include "LineFollowing.h"
 
 #define BASE_WALL_FOLLOW_SPEED 30
+#define BASE_LINE_FOLLOW_SPEED 10
+
 #define TARGET_DISTANCE 30
 
 class PID {
@@ -17,13 +19,17 @@ private:
 
   double wallIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
   double lastWallError = 0;   //used to calculate the D term in IRPID
-  char currIndex = 0; //used to reference integral windup buffer
+  char currWallIndex = 0; //used to reference integral windup buffer
 
   int16_t sumLeft = 0;
   int16_t sumRight = 0;
 
   int16_t prevLeft = 0;
   int16_t prevRight = 0;
+
+  double lineIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
+  double lastlineError = 0;   //used to calculate the D term in IRPID
+  char currlineIndex = 0; //used to reference integral windup buffer
 
   SharpIR *sharp;
   LineFollowing *line;
@@ -34,12 +40,11 @@ private:
   float speedEffortLeft = 0;
   float speedEffortRight = 0;
 
-  float lineEffortLeft = 0;
-  float lineEffortRight = 0;
-
   float wallEffortLeft = 0;
   float wallEffortRight = 0;
 
+  float lineEffortLeft = 0;
+  float lineEffortRight = 0;
 
 public:
   PID(SharpIR *this_sharp, LineFollowing *this_line);

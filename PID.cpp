@@ -76,18 +76,18 @@ void PID::calcWallPID()
 
   double wallError = TARGET_DISTANCE - sharp->getDistance();
 
-  if(currIndex >= 10)
-    currIndex = 0;
+  if(currWallIndex >= 10)
+    currWallIndex = 0;
 
-  wallIntegralSum[currIndex] = wallError;
-  currIndex++;
+  wallIntegralSum[currWallIndex] = wallError;
+  currWallIndex++;
 
   for(char i = 0; i < 10; i++)
   {
     wallSum += wallIntegralSum[i];
   }
 
-  wallSum = wallSum / currIndex;
+  wallSum = wallSum / currWallIndex;
 
   // double wallChange = lastWallError - wallError; TODO: implement derivate term
   // lastWallError = wallError;
@@ -98,7 +98,49 @@ void PID::calcWallPID()
   wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
 }
 
-void PID::calcLinePID() {}
+void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float baseSpeedModifier)
+{
+  double lineError = 0;
+  double lineSum = 0;
+  lineEffortLeft = thisLineEffortLeft;
+  lineEffortRight = thisLineEffortRight;
+
+  if (line->isParallel()){
+    lineError = line->getPositionAlongLine(lineEffortLeft, lineEffortRight);
+  }
+  else{
+    lineError = line->getPosition(lineEffortLeft, lineEffortRight);
+  }
+
+  if(currlineIndex >= 10)
+    currlineIndex = 0;
+
+  lineIntegralSum[currlineIndex] = lineError;
+  currlineIndex++;
+
+  for(char i = 0; i < 10; i++)
+  {
+    lineSum += lineIntegralSum[i];
+  }
+
+  lineSum = lineSum / currlineIndex;
+
+  double lineDiff = lastError - lineError;
+  lastlineError = lineError;
+
+  if (error > 0){
+    lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
+    lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) + (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
+  }
+  else if (error < 0){
+    lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) - (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
+    lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
+  }
+    else if(error == 0){
+      lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
+      lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
+  }
+}
 
 float PID::getLeftLineEffort() {
     return lineEffortLeft;
