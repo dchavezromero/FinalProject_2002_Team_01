@@ -67,6 +67,8 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
      sumRight = 200;
    }
 
+   //Serial.println(errorLeft);
+
   speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
   speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
 }
@@ -75,7 +77,7 @@ void PID::calcWallPID()
 {
     dtWall = millis() - lastWallMillis;
 
-    lastWallMillis = dtWall;
+    lastWallMillis = millis();
 
     //caculate error
     float wallError = TARGET_DISTANCE - sharp->getDistance();
