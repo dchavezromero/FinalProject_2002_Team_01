@@ -5,14 +5,14 @@
 #include "filter.h"             //include IMU
 #include "LineFollowing.h"
 
-#define BASE_WALL_FOLLOW_SPEED 20
+#define BASE_WALL_FOLLOW_SPEED 15
 #define BASE_LINE_FOLLOW_SPEED 10
 
 #define TARGET_DISTANCE 20
 
-#define KP_WALL 0.5
+#define KP_WALL 1.0
 #define KI_WALL 0
-#define KD_WALL 0.1
+#define KD_WALL 0.05
 
 #define KP_GYRO 0.2
 #define KI_GYRO 0.0
@@ -23,6 +23,7 @@
 #define KD_SPEED 0.0
 
 class LineFollowing;
+class SharpIR;
 
 class PID {
 private:

@@ -31,14 +31,21 @@ Robot *Robot::getRobot() {
 bool Robot::loop() {
     updateSensors();
 
-    if(readyToPID) {
-        filter->CalcAngle();
+    ir->getDistance();
 
+    if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
+
+        readyToSpeedPID = false;
+    }
+
+    if(readyToWallPID) {
         pid->calcWallPID();
 
-        readyToPID = false;
+        readyToWallPID = false;
     }
+
+    filter->CalcAngle();
 
     motors.setSpeeds(pid->getLeftSpeedEffort(), pid->getRightSpeedEffort());
 
@@ -210,5 +217,5 @@ ISR(TIMER4_OVF_vect)
     robot->countsLeft = encoders.getCountsLeft();
     robot->countsRight = encoders.getCountsRight();
 
-    robot->readyToPID = true;
+    robot->readyToSpeedPID = true;
 }
