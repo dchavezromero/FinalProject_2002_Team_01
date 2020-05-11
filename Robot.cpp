@@ -40,7 +40,7 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(0, 0);
 
             //If we detect an IR signal
-            if(proxSensors.readBasicFront()) {
+            if(line->detectIR()) {
                 timer->Start(1000);
                 incrementState();
 
