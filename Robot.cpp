@@ -61,7 +61,7 @@ bool Robot::runStateMachine() {
 
             if(getDegreesTurned() > 90) {
                 //TODO: Make sure we're updating speed targets so that the pivot speeds get overwritten when trying to acquire the line
-                if(line->Align(pid->getLineLeftEffort(), pid->getLineRightEffort())) {
+                if(line->Align(pid->getLeftLineEffort(), pid->getRightLineEffort())) {
                     incrementState();
                 }
             }
@@ -69,7 +69,7 @@ bool Robot::runStateMachine() {
         case LINE_FOLLOW:
             pid->linePID();
 
-            pid->setSpeedTargets(pid->getLineLeftEffort(), pid->getLineRightEffort());
+            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
             if(proxSensors.readBasicFront()) {
                 resetEncoderOffset();

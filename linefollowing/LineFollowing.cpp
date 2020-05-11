@@ -13,8 +13,8 @@ LineFollowing::LineFollowing(){
 
 //initiate the line sensor and proximity sensor
 LineFollowing::Init(){
-  lineSensors.initThreeSensors();     
-  proxSensors.initFrontSensor(); 
+  lineSensors.initThreeSensors();
+  proxSensors.initFrontSensor();
 }
 
 
@@ -45,7 +45,7 @@ LineFollowing::Detect(){
 /*
  * declares values to the position of the line based on what sensors can see it
  * with the line being centered as zero
- */ 
+ */
 int LineFollowing::Position(){
   this->Detect();
   if(DetectLeft && !DetectCenter && !DetectRight){
@@ -76,7 +76,7 @@ int LineFollowing::Position(){
  */
 int LineFollowing::PositionAlongLine(){
   this->Detect();
- 
+
   if(DetectLeft && DetectCenter && !DetectRight){
     line = 2;
   }
@@ -92,7 +92,7 @@ int LineFollowing::PositionAlongLine(){
    else if(!DetectLeft && DetectCenter && DetectRight){
     line = -2;
   }
-  
+
   else if(!DetectLeft && DetectCenter && !DetectRight){
     line = 5;
    }
@@ -103,25 +103,28 @@ int LineFollowing::PositionAlongLine(){
 }
 
 //adjusts slowly to try to align the center sensor to the line
-bool LineFollowing::Align(float& LeftEffort, float& RightEffort){
-  this->LinePID(LeftEffort, RightEffort, 0);
-  if (RightEffort == 0 && LeftEffort == 0){
-  return true;
-  }
-  else
-  return false;
+bool LineFollowing::Align(float LeftEffort, float RightEffort){
+    float left = LeftEffort;
+    float right = RightEffort;
+    
+    this->LinePID(left, right, 0);
+    if (right == 0 && left == 0){
+        return true;
+    }
+
+    return false;
 }
 
 //adjusts slowly but uses the other values for location
 bool LineFollowing::AlignAlong(float& LeftEffort, float& RightEffort){
-  parallel = true;
-  this->LinePID(LeftEffort, RightEffort, 0);
-  if (RightEffort == 0 && LeftEffort == 0){
-  parallel = false;
-  return true;
-  }
-  else
-  return false;
+    parallel = true;
+    this->LinePID(LeftEffort, RightEffort, 0);
+    if (RightEffort == 0 && LeftEffort == 0){
+    parallel = false;
+        return true;
+    }
+
+    return false;
 }
 
 //PID based line following with slow adjustments
@@ -134,7 +137,7 @@ float LineFollowing::LinePID(float& LeftEffort, float& RightEffort,double basesp
  }
   lineSum += Sum(error);
   double lineDiff = lastError - error;
-  lastError = error; 
+  lastError = error;
   if (error > 0){
     LeftEffort = basespeed;
     RightEffort = basespeed + (Kp * error + Ki * lineSum + Kd * lineDiff);
@@ -147,11 +150,11 @@ float LineFollowing::LinePID(float& LeftEffort, float& RightEffort,double basesp
     LeftEffort = basespeed;
     RightEffort = basespeed;
   }
-  
-  
+
+
 }
 
-//limits I term 
+//limits I term
 LineFollowing::Sum(int error){
    sumLine[i] = error;
     i++;
@@ -161,5 +164,5 @@ LineFollowing::Sum(int error){
     double sumLineError = sumLine[0] + sumLine[1] + sumLine[2] + sumLine[3] + sumLine[4] +
      sumLine[5] + sumLine[6] + sumLine[7] + sumLine[8] + sumLine[9];
   return sumLineError;
-  
+
 }

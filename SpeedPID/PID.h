@@ -25,7 +25,7 @@ private:
   float rightWallEffort = 0;
 
   float leftLineEffort = 0;
-
+  float rightLineEffort = 0;
 
 public:
   PID(SharpIR *this_sharp, LineFollowing *this_line);
