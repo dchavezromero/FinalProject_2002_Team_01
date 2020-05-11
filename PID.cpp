@@ -106,10 +106,10 @@ void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float
   lineEffortRight = thisLineEffortRight;
 
   if (line->isParallel()){
-    lineError = line->getPositionAlongLine(lineEffortLeft, lineEffortRight);
+    lineError = line->getPositionAlongLine();
   }
   else{
-    lineError = line->getPosition(lineEffortLeft, lineEffortRight);
+    lineError = line->getPosition();
   }
 
   if(currlineIndex >= 10)
@@ -125,7 +125,7 @@ void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float
 
   lineSum = lineSum / currlineIndex;
 
-  double lineDiff = lastError - lineError;
+  double lineDiff = lastlineError - lineError;
   lastlineError = lineError;
 
   if (error > 0){

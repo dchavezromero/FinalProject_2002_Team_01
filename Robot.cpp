@@ -51,7 +51,7 @@ bool Robot::runStateMachine() {
         case WALL_FOLLOW:
             pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
-            if(line->detectLine() || proxSensors.readBasicFront()) {
+            if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
             }

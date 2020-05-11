@@ -10,6 +10,8 @@
 
 #define TARGET_DISTANCE 30
 
+class LineFollowing;
+
 class PID {
 private:
   double speedConsts[3] = {0, 0, 0};

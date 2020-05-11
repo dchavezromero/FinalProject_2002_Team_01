@@ -31,8 +31,8 @@ public:
 
   void Init(PID *thiPid);
   void update(void);
-  void detectLine(void);
 
+  bool detectLine(void);
   bool detectIR(void);
   bool isParallel(void);
   bool doAlign(float leftEffort, float rightEffort);
