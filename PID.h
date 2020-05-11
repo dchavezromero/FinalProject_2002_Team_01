@@ -30,9 +30,17 @@ private:
   double wallConsts[3] = {0, 0, 0};
   double lineConsts[3] = {0, 0, 0};
 
-  double wallIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
+  static const int wallSampleSize = 10;
+  double wallIntegralSum[wallSampleSize] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
   double lastWallError = 0;   //used to calculate the D term in IRPID
+  double wallDerivativeError = 0;
+  float lastWallPosition = 0;
+  float wallSum = 0;
+  float runningWallAvg = 0;
   char currWallIndex = 0; //used to reference integral windup buffer
+  unsigned long lastWallMillis = 0;
+  unsigned long dtWall = 0;
+  bool wallIterFlag = false;
 
   int16_t sumLeft = 0;
   int16_t sumRight = 0;
@@ -42,6 +50,7 @@ private:
 
   double lineIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
   double lastlineError = 0;   //used to calculate the D term in IRPID
+
   char currlineIndex = 0; //used to reference integral windup buffer
   float currentBaseSpeed = BASE_LINE_FOLLOW_SPEED;
 

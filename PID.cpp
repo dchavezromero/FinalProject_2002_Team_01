@@ -72,27 +72,33 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
 
 void PID::calcWallPID()
 {
-  double wallSum = 0;
+  dtWall = millis() - lastWallMillis;
 
-  double wallError = TARGET_DISTANCE - sharp->getDistance();
+  //caculate error
+  float wallError = TARGET_DISTANCE - sharp->getDistance();
 
-  if(currWallIndex >= 10)
-    currWallIndex = 0;
+  //calculate derivate error
+  wallDerivativeError = (lastWallMillis - sharp->getDistance())/(dtWall * 10^-3); //*10^-3 due to millis reading
+  lastWallPosition = sharp->getDistance();
 
+  //calculate integral error
+  wallSum -= wallIntegralSum[currWallIndex];
   wallIntegralSum[currWallIndex] = wallError;
+  wallSum += wallError;
   currWallIndex++;
 
-  for(char i = 0; i < 10; i++)
-  {
-    wallSum += wallIntegralSum[i];
+  if(wallIterFlag == false)
+    runningWallAvg = wallSum / currWallIndex;
+  else
+    runningWallAvg = wallSum / wallSampleSize;
+    currWallIndex = 0;
+    wallIterFlag = true;
   }
-
-  wallSum = wallSum / currWallIndex;
 
   // double wallChange = lastWallError - wallError; TODO: implement derivate term
   // lastWallError = wallError;
 
-  double effort = wallConsts[0] * wallError + wallConsts[1] * wallSum;
+  double effort = wallConsts[0] * wallError + wallConsts[1] * runningWallAvg + wallConsts[2] * wallDerivativeError;
 
   wallEffortLeft = BASE_WALL_FOLLOW_SPEED - effort;
   wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
