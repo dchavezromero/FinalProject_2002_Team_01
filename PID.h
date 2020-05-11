@@ -1,9 +1,9 @@
 #ifndef _PID_H
 #define _PID_H
 
-#include "../sharp_ir/SharpIR.h"            //include the IR
-#include "../InertialSensors/filter.h"             //include IMU
-#include "../linefollowing/LineFollowing.h"
+#include "SharpIR.h"            //include the IR
+#include "filter.h"             //include IMU
+#include "LineFollowing.h"
 
 #define BASE_WALL_FOLLOW_SPEED 30
 #define TARGET_DISTANCE 30
@@ -19,6 +19,11 @@ private:
   double lastWallError = 0;   //used to calculate the D term in IRPID
   char currIndex = 0; //used to reference integral windup buffer
 
+  int16_t sumLeft = 0;
+  int16_t sumRight = 0;
+
+  int16_t prevLeft = 0;
+  int16_t prevRight = 0;
 
   SharpIR *sharp;
   LineFollowing *line;

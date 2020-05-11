@@ -3,7 +3,10 @@
 
 #include <Arduino.h>
 #include "EventTimer.h"
-#include "SpeedPID/PID.h"
+#include "PID.h"
+#include "SharpIR.h"
+#include "LineFollowing.h"
+#include "filter.h"
 
 #define WHEEL_TRACK 8.5 //Distance between wheels in CM
 #define TICKS_TO_CM 1 //TODO: Find this value
@@ -63,7 +66,7 @@ public:
     void init();
     bool loop();
 
-    bool readyToPid = false;
+    bool readyToPID = false;
     int16_t countsLeft = 0;
     int16_t countsRight = 0;
 

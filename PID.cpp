@@ -34,11 +34,11 @@ void PID::setWallPID(double P, double I, double D)
   wallConsts[2] = D;
 }
 
-void PID::setGyroPID(double P, double I, double D)
+void PID::setLinePID(double P, double I, double D)
 {
-  gyroConsts[0] = P;
-  gyroConsts[1] = I;
-  gyroConsts[2] = D;
+  lineConsts[0] = P;
+  lineConsts[1] = I;
+  lineConsts[2] = D;
 }
 
 void PID::setSpeedTargets(int16_t targetLeftSpeed, int16_t targetRightSpeed) {
@@ -52,16 +52,16 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
   int16_t speedLeft = countsLeft - prevLeft;
   int16_t speedRight = countsRight - prevRight;
 
-  int16_t prevLeft = countsLeft;
-  int16_t prevRight = countsRight;
+  prevLeft = countsLeft;
+  prevRight = countsRight;
   interrupts();
 
   int16_t errorLeft = targetLeft - speedLeft;
-  int16_t sumLeft += errorLeft;
+  sumLeft += errorLeft;
   int16_t errorRight = targetRight - speedRight;
-  int16_t sumRight += errorRight;
+  sumRight += errorRight;
 
-  if(sumLeft>= 200){
+  if(sumLeft >= 200){
      sumLeft = 200;
      sumRight = 200;
    }
@@ -74,7 +74,7 @@ void PID::calcWallPID()
 {
   double wallSum = 0;
 
-  double wallError = TARGET_DISTANCE - sharp.getDistance();
+  double wallError = TARGET_DISTANCE - sharp->getDistance();
 
   if(currIndex >= 10)
     currIndex = 0;
@@ -82,7 +82,7 @@ void PID::calcWallPID()
   wallIntegralSum[currIndex] = wallError;
   currIndex++;
 
-  for(uint4_t i = 0, i < 10, i++)
+  for(char i = 0; i < 10; i++)
   {
     wallSum += wallIntegralSum[i];
   }
@@ -98,18 +98,20 @@ void PID::calcWallPID()
   wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
 }
 
+void PID::calcLinePID() {}
+
 float PID::getLeftLineEffort() {
-    return leftLineEffort;
+    return lineEffortLeft;
 }
 
 float PID::getRightLineEffort() {
-    return rightLineEffort;
+    return lineEffortRight;
 }
 
 float PID::getLeftWallEffort() {
-    return leftWallEffort;
+    return wallEffortLeft;
 }
 
 float PID::getRightWallEffort() {
-    return rightWallEffort;
+    return wallEffortRight;
 }

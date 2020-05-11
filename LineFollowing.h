@@ -2,8 +2,8 @@
 #define _LINEFOLLOWING_H
 
 #include <Arduino.h>
-#include "../EventTimer.h"
 #include <Zumo32U4.h>
+#include "EventTimer.h"
 
 class LineFollowing {
 public:

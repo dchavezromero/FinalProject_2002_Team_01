@@ -6,7 +6,7 @@ class EventTimer {
 private:
   int timer_duration;
   long int start_time;
-  bool expired = false;
+  bool expired = true;
 public:
   EventTimer();
 

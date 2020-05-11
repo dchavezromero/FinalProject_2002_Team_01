@@ -4,7 +4,7 @@ Robot* Robot::instance = 0;
 
 Robot::Robot() {
     timer = new EventTimer();
-    ir = new SharpIR();
+    ir = new SharpIR((uint8_t) A6);
     line = new LineFollowing();
     pid = new PID(ir, line);
     filter = new ComplementaryFilter();

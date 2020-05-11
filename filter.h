@@ -1,9 +1,9 @@
 #ifndef _FILTER_H
 #define _FILTER_H
 
-#include "arduino.h"
 #include <Wire.h>
 #include <Zumo32U4.h>
+#include "arduino.h"
 
 #define RAD_TO_DEG 57.29577
 #define READING_TO_DPS (8.75 * 1000) //Sensitivity * 1000 (mdps -> dps)
