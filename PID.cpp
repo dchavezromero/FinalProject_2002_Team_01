@@ -11,9 +11,10 @@ PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
   speedConsts[1] = KI_SPEED;
   speedConsts[2] = KD_SPEED;
 
-  // irConsts[0] = kp_ir;
-  // irConsts[1] = ki_ir;
-  // irConsts[2] = kd_ir;
+  wallConsts[0] = KP_WALL;
+  wallConsts[1] = KI_WALL;
+  wallConsts[2] = KD_WALL;
+  
   //
   // gyroConsts[0] = kp_gyro;
   // gyroConsts[1] = ki_gyro;
@@ -72,36 +73,36 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
 
 void PID::calcWallPID()
 {
-  dtWall = millis() - lastWallMillis;
+    dtWall = millis() - lastWallMillis;
 
-  //caculate error
-  float wallError = TARGET_DISTANCE - sharp->getDistance();
+    //caculate error
+    float wallError = TARGET_DISTANCE - sharp->getDistance();
 
-  //calculate derivate error
-  wallDerivativeError = (lastWallMillis - sharp->getDistance())/(dtWall * 10^-3); //*10^-3 due to millis reading
-  lastWallPosition = sharp->getDistance();
+    //calculate derivate error
+    wallDerivativeError = (lastWallMillis - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
+    lastWallPosition = sharp->getDistance();
 
-  //calculate integral error
-  wallSum -= wallIntegralSum[currWallIndex];
-  wallIntegralSum[currWallIndex] = wallError;
-  wallSum += wallError;
-  currWallIndex++;
+    //calculate integral error
+    wallSum -= wallIntegralSum[currWallIndex];
+    wallIntegralSum[currWallIndex] = wallError;
+    wallSum += wallError;
+    currWallIndex++;
 
-  if(wallIterFlag == false)
-    runningWallAvg = wallSum / currWallIndex;
-  else
-    runningWallAvg = wallSum / wallSampleSize;
-    currWallIndex = 0;
-    wallIterFlag = true;
-  }
+    if(wallIterFlag == false) {
+        runningWallAvg = wallSum / currWallIndex;
+    } else {
+        runningWallAvg = wallSum / wallSampleSize;
+        currWallIndex = 0;
+        wallIterFlag = true;
+    }
 
-  // double wallChange = lastWallError - wallError; TODO: implement derivate term
-  // lastWallError = wallError;
+    // double wallChange = lastWallError - wallError; TODO: implement derivate term
+    // lastWallError = wallError;
 
-  double effort = wallConsts[0] * wallError + wallConsts[1] * runningWallAvg + wallConsts[2] * wallDerivativeError;
+    double effort = wallConsts[0] * wallError + wallConsts[1] * runningWallAvg + wallConsts[2] * wallDerivativeError;
 
-  wallEffortLeft = BASE_WALL_FOLLOW_SPEED - effort;
-  wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
+    wallEffortLeft = BASE_WALL_FOLLOW_SPEED - effort;
+    wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
 }
 
 void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float baseSpeedModifier)

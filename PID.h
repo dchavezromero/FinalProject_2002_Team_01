@@ -8,11 +8,11 @@
 #define BASE_WALL_FOLLOW_SPEED 30
 #define BASE_LINE_FOLLOW_SPEED 10
 
-#define TARGET_DISTANCE 30
+#define TARGET_DISTANCE 20
 
-#define KP_IR 0.05
-#define KI_IR 0.05
-#define KD_IR -6.00
+#define KP_WALL 0.05
+#define KI_WALL 0
+#define KD_WALL 0
 
 #define KP_GYRO 0.2
 #define KI_GYRO 0.0
