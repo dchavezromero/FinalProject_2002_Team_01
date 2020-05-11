@@ -14,6 +14,8 @@ float SharpIR::getDistance(void){
     if (timer->CheckExpired()){
         timer->Start(waitingTime);
         val = analogRead(pin);
+
+        Robot::getRobot()->readyToWallPID = true;
     }
 
     double voltage = (val * ADC_TO_VOUT);

@@ -15,6 +15,10 @@
 
 #define PIVOT_SPEED 20
 
+class SharpIR;
+class LineFollowing;
+class PID;
+
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable
 private:
@@ -67,7 +71,9 @@ public:
     void init();
     bool loop();
 
-    bool readyToPID = false;
+    bool readyToSpeedPID = false;
+    bool readyToWallPID = false;
+
     int16_t countsLeft = 0;
     int16_t countsRight = 0;
 
