@@ -1,34 +1,24 @@
+#ifndef _SHARPIR_H
+#define _SHARPIR_H
+
 #include "arduino.h"
 #include "../EventTimer.h"
 
-#ifndef _SHARPIR_H
-#define _SHARPIR_H
+#define ADC_TO_VOUT (5 / 1024) //2^10 (10 bit microntroller)
+#define MAGIC_NUM_ONE 95.9972 //TODO: figure out where these came from
+#define MAGIC_NUM_TWO 0.315141
 
 class SharpIR {
 private:
     float leftEffort, rightEffort;
 public:
     EventTimer timer;                 //nonblocking timer for when to read
-    int IRPin = A6;                   //default IR pin
-    int val = 0;                      //raw IR reading
+    uint8_t pin = A6;                   //default IR pin
     unsigned int waitingTime = 50;    //millis between readings
 
-    double Kp = 0.4;    //PID P constant
-    double Ki = 0.1;    //PID I constant
-    double Kd = 0;      //PID D constant
-
-    double lastWallError = 0;   //used to calculate the D term in IRPID
-    double wallSum = 0;         //used for I term in IRPID
-    double sumWall[10];         //used to limit I term in rollingSUM
-    int i = 0;                  //used to rotate through arrays terms
-
-    SharpIR(uint8_t pin);
-    SharpIR();
-    float getDistance(float& Dist);
-    setIRPID(double P, double I, double D);
-    float IRPID(float& LeftEffort, float&RightEffort, float& wallError,double distance, double baseSpeed);
-    double rollingSum(float error);
+    SharpIR(uint8_t thisPin = A6);
+    float getDistance(void);
 };
 
 
-  #endif
+#endif

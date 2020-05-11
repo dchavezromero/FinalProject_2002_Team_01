@@ -17,9 +17,9 @@
 #define KI_GYRO 0.0
 #define KD_GYRO 0.0
 
-#define KP_MOTORS 18.0;
-#define KI_MOTORS 1.5;
-#define KD_MOTORS 0.0;
+#define KP_SPEED 18.0;
+#define KI_SPEED 1.5;
+#define KD_SPEED 0.0;
 
 EventTimer timer;         //assumes you named your class EventTimer
 SharpIR Sharp;            //sets up IR with default pin A6
@@ -78,7 +78,7 @@ void setup()
   line.Init();
   Sharp.setIRPID(KP_IR, KI_IR, KP_IR);
   filter.setGyroPID(KP_GYRO, KI_GYRO, KD_GYRO);
-  speed.setSpeedPID(KP_MOTORS, KI_MOTORS, KD_MOTORS);
+  speed.setSpeedPID(KP_SPEED, KI_SPEED, KD_SPEED);
 
 }
 
