@@ -5,7 +5,7 @@
 #include "filter.h"             //include IMU
 #include "LineFollowing.h"
 
-#define BASE_WALL_FOLLOW_SPEED 30
+#define BASE_WALL_FOLLOW_SPEED 20
 #define BASE_LINE_FOLLOW_SPEED 10
 
 #define TARGET_DISTANCE 20

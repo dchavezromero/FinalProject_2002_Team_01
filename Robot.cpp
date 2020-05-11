@@ -34,7 +34,9 @@ bool Robot::loop() {
     if(readyToPID) {
         filter->CalcAngle();
         pid->calcSpeedPID(countsLeft, countsRight);
+        //Serial.println("Before wall PID");
         pid->calcWallPID();
+        //Serial.println("After wall PID");
 
         readyToPID = false;
     }
@@ -51,9 +53,9 @@ void Robot::updateSensors() {
 bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
-            Serial.println(filter->getCurrentAngle());
-            lcd.clear();
-            lcd.print(filter->getCurrentAngle());
+            //Serial.println(filter->getCurrentAngle());
+            //lcd.clear();
+            //lcd.print(filter->getCurrentAngle());
 
             pid->setSpeedTargets(0, 0);
 

@@ -14,7 +14,7 @@ PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
   wallConsts[0] = KP_WALL;
   wallConsts[1] = KI_WALL;
   wallConsts[2] = KD_WALL;
-  
+
   //
   // gyroConsts[0] = kp_gyro;
   // gyroConsts[1] = ki_gyro;
@@ -75,11 +75,13 @@ void PID::calcWallPID()
 {
     dtWall = millis() - lastWallMillis;
 
+    lastWallMillis = dtWall;
+
     //caculate error
     float wallError = TARGET_DISTANCE - sharp->getDistance();
 
     //calculate derivate error
-    wallDerivativeError = (lastWallMillis - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
+    wallDerivativeError = (lastWallPosition - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
     lastWallPosition = sharp->getDistance();
 
     //calculate integral error
