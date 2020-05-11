@@ -73,6 +73,9 @@ public:
   void setWallPID(double P, double I, double D);
   void setLinePID(double P, double I, double D);
 
+  float getLeftSpeedEffort();
+  float getRightSpeedEffort();
+
   float getLeftWallEffort();
   float getRightWallEffort();
 

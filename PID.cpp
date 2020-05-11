@@ -165,3 +165,11 @@ float PID::getLeftWallEffort() {
 float PID::getRightWallEffort() {
     return wallEffortRight;
 }
+
+float PID::getLeftSpeedEffort() {
+    return speedEffortLeft;
+}
+
+float PID::getRightSpeedEffort() {
+    return speedEffortRight;
+}

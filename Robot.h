@@ -9,11 +9,11 @@
 #include "filter.h"
 
 #define WHEEL_TRACK 8.5 //Distance between wheels in CM
-#define TICKS_TO_CM 50.5 //TODO: Find this value
+#define TICKS_TO_CM 52.0 //TODO: Find this value
 
-#define PIVOT_CIRCUMFERENCE PI*WHEEL_TRACK
+#define PIVOT_CIRCUMFERENCE (PI*WHEEL_TRACK)
 
-#define PIVOT_SPEED 75
+#define PIVOT_SPEED 20
 
 class Robot {
     static Robot *instance; //Singleton design patter -- Makes ISRs bearable

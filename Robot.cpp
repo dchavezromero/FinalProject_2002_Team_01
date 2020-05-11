@@ -3,6 +3,8 @@
 Robot* Robot::instance = 0;
 
 Robot::Robot() {
+    Serial.begin(115200);
+
     timer = new EventTimer();
     ir = new SharpIR((uint8_t) A6);
     line = new LineFollowing();
@@ -30,6 +32,7 @@ bool Robot::loop() {
     updateSensors();
 
     pid->calcSpeedPID(countsLeft, countsRight);
+    //  motors.setSpeeds(pid->getLeftSpeedEffort(), pid->getRightSpeedEffort());
 
     return runStateMachine();
 }
@@ -41,6 +44,8 @@ void Robot::updateSensors() {
 bool Robot::runStateMachine() {
     switch(currentState) {
         case STARTUP:
+            getDegreesTurned();
+
             pid->setSpeedTargets(0, 0);
 
             //If we detect an IR signal
@@ -58,6 +63,7 @@ bool Robot::runStateMachine() {
                 lcd.clear();
                 lcd.print("WALL_FOLLOW");
                 incrementState();
+                resetEncoderOffset();
             }
             break;
         case WALL_FOLLOW:
@@ -68,7 +74,12 @@ bool Robot::runStateMachine() {
                 incrementState();
             }*/
 
-
+            pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
+            if(getDegreesTurned() > 90) {
+                lcd.clear();
+                lcd.print("YAY");
+                pid->setSpeedTargets(0, 0);
+            }
 
             break;
         case TURN_LEFT_90:
@@ -77,7 +88,7 @@ bool Robot::runStateMachine() {
             if(getDegreesTurned() > 90) {
                 //TODO: Make sure we're updating speed targets so that the pivot speeds get overwritten when trying to acquire the line
                 if(line->doAlign(pid->getLeftLineEffort(), pid->getRightLineEffort())) {
-                    incrementState();
+                    //incrementState();
                 }
             }
             break;
@@ -141,7 +152,18 @@ float Robot::getDegreesTurned() {
     int avgTurned = abs((-dLeft + dRight)/2); //TODO: Make not abs()
 
     //Calculate what percentage of the circle we've spun, then multiply by 360 to calculate degrees turned
-    float degreesTurned = (PIVOT_CIRCUMFERENCE / (avgTurned / TICKS_TO_CM)) * 360;
+
+    float cmTraveled = (avgTurned / TICKS_TO_CM);
+    double pctCircle = cmTraveled / PIVOT_CIRCUMFERENCE;
+    float degreesTurned = pctCircle * 360;
+
+    Serial.print(cmTraveled);
+    Serial.print("\t");
+    Serial.print(PIVOT_CIRCUMFERENCE);
+    Serial.print("\t");
+    Serial.print(pctCircle);
+    Serial.print("\t");
+    Serial.println(degreesTurned);
 
     return degreesTurned;
 }
