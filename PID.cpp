@@ -2,8 +2,8 @@
 
 PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
 {
-  sharp = this_sharp;
-  line = this_line;
+  this_sharp = sharp;
+  this_line = line;
 
   //TODO: default to pulling from params.h
 
@@ -65,7 +65,9 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
   if(sumLeft >= 200){
      sumLeft = 200;
      sumRight = 200;
- }
+   }
+
+   Serial.println(errorLeft);
 
   speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
   speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
@@ -80,17 +82,15 @@ void PID::calcWallPID()
     //caculate error
     float wallError = TARGET_DISTANCE - sharp->getDistance();
 
-    Serial.println(wallError);
-
     //calculate derivate error
     wallDerivativeError = (lastWallPosition - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
     lastWallPosition = sharp->getDistance();
 
     //calculate integral error
-    /*wallSum -= wallIntegralSum[currWallIndex];
+    wallSum -= wallIntegralSum[currWallIndex];
     wallIntegralSum[currWallIndex] = wallError;
     wallSum += wallError;
-    currWallIndex = (currWallIndex + 1) % wallSampleSize;
+    currWallIndex++;
 
     if(wallIterFlag == false) {
         runningWallAvg = wallSum / currWallIndex;
@@ -98,14 +98,10 @@ void PID::calcWallPID()
         runningWallAvg = wallSum / wallSampleSize;
         currWallIndex = 0;
         wallIterFlag = true;
-    }*/
-
-    runningWallAvg = 0;
-
-    if(currWallIndex == wallSampleSize){ //if buffer is full
-      currWallIndex = 0; //reset index to dynamically update error entries
-      wallIterFlag = true; //set flag to true
     }
+
+    // double wallChange = lastWallError - wallError; TODO: implement derivate term
+    // lastWallError = wallError;
 
     double effort = wallConsts[0] * wallError + wallConsts[1] * runningWallAvg + wallConsts[2] * wallDerivativeError;
 
