@@ -3,7 +3,7 @@
 Robot* Robot::instance = 0;
 
 Robot::Robot() {
-    //Serial.begin(115200);
+    Serial.begin(115200);
 
     timer = new EventTimer();
     ir = new SharpIR((uint8_t) A6);
@@ -39,7 +39,7 @@ bool Robot::loop() {
     if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
 
-        pid->calcLinePID(pid->getCurrentBaseSpeed());
+        pid->calcLinePID(0);
 
         readyToSpeedPID = false;
     }
@@ -89,13 +89,13 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+//              pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
               pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
 
 //              Serial.print("\t");
-//              Serial.print("Right line effort: ");
+              Serial.println("Right line effort: ");
 //              Serial.print("\t");
 //              Serial.print(pid->getRightLineEffort());
 //              Serial.println("");
