@@ -93,13 +93,11 @@ void PID::calcWallPID()
     wallSum += wallError;
     currWallIndex++;
 
-    if(wallIterFlag == false) {
+    if(wallIterFlag == false) 
         runningWallAvg = wallSum / currWallIndex;
-    } else {
+    else
         runningWallAvg = wallSum / wallSampleSize;
-        currWallIndex = 0;
-        wallIterFlag = true;
-    }
+    
 
     if(currWallIndex == wallSampleSize){ //if buffer is full
       currWallIndex = 0; //reset index to dynamically update error entries
