@@ -21,3 +21,18 @@ float SharpIR::getDistance(void){
     double voltage = (val * ADC_TO_VOUT);
     return (MAGIC_NUM_ONE * pow(MAGIC_NUM_TWO, voltage));
 }
+
+float SharpIR::AverageDistance(void){
+    average -= averageIR[IRIndex];
+    averageIR[IRIndex] = this->getDistance();
+    average += this->getDistance();
+    IRIndex++;
+    if (IRIndex >= MaxIRIndex){
+        IRIndex = 0;
+    }
+
+    if (averageIR[9] == 0)
+    return average / IRIndex;
+    else
+    return average / MaxIRIndex;
+}
