@@ -69,7 +69,7 @@ bool Robot::loop() {
         pid->calcSpeedPID(countsLeft, countsRight);
 
         //Update the line following PID
-        pid->calcLinePID(0);
+        //pid->calcLinePID(0);
 
         //Reset the readyToSpeedPID flag so that we do not run these again until
         //we have new encoder values
