@@ -83,8 +83,8 @@ void PID::calcWallPID()
     lastWallMillis = millis();
 
     //calculate derivate error
-    double wallDerivativeError = (lastWallPosition - sharp->AverageDistance()); //*10^-3 due to millis reading
-      lastWallPosition = sharp->AverageDistance();
+    float wallDerivativeError = (lastWallPosition - sharp->AverageDistance()); //*10^-3 due to millis reading
+    lastWallPosition = sharp->AverageDistance();
 
     //calculate integral error
     wallSum -= wallIntegralSum[currWallIndex];
@@ -114,25 +114,18 @@ void PID::calcWallPID()
 
 void PID::calcLinePID(float baseSpeedModifier)
 {
-  double linePosition = 0;
-
+  double lineError = 0;
+  
   dtLine = millis() - lastLineMillis;
   lastLineMillis = millis();
-
+  
   if (line->isParallel()){
-    linePosition = line->getPositionAlongLine();
+    lineError = line->getPositionAlongLine();
   }
   else{
-    linePosition = line->getPosition();
+    lineError = line->getPosition();
   }
-  double lineError = lastLinePositon - linePosition;
-
-//  if(abs(linePosition) + abs(lastLinePositon) > abs(linePosition + lastLinePositon)) //check for sign change in position
-//    clearLineIntegralBuffer();
-
-  double lineDerivativeError = (lastLinePositon - linePosition)/dtLine;
-  lastLinePositon = linePosition;
-
+  
   lineSum -= lineIntegralSum[currLineIndex];
   lineIntegralSum[currLineIndex] = lineError;
   lineSum += lineError;
@@ -143,10 +136,13 @@ void PID::calcLinePID(float baseSpeedModifier)
   else
       runningLineAvg = lineSum / lineSampleSize;
 
-  if(currLineIndex == lineSampleSize){ //if buffer is full
-    currLineIndex = 0; //reset index to dynamically update error entries
-    lineIterFlag = true; //set flag to true
-  }
+    if(currLineIndex == lineSampleSize) { //if buffer is full
+      currLineIndex = 0; //reset index to dynamically update error entries
+      lineIterFlag = true; //set flag to true
+    }
+
+  double lineDerivativeError = lastLineError - lineError;
+  lastLineError = lineError;
 
   if (lineError > 0){
     lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
@@ -162,33 +158,15 @@ void PID::calcLinePID(float baseSpeedModifier)
   }
 }
 
-void PID::clearLineIntegralBuffer(void) {
-
-  for(uint8_t i = 0; i < lineSampleSize; i++) {
-    lineIntegralSum[i] = 0;
-  }
-
-	lineSum = 0; //reset vars
-	currLineIndex = 0;
-	lineIterFlag = false;
-}
-
 void PID::updateCurrentBaseSpeed(float baseSpeedModifier) {
   currentBaseSpeed = currentBaseSpeed - baseSpeedModifier;
 }
 
 float PID::getLeftLineEffort() {
-//    Serial.print("Left line effort: ");
-//    Serial.print("\t");
-//    Serial.print(lineEffortLeft);
     return lineEffortLeft;
 }
 
 float PID::getRightLineEffort() {
-//    Serial.print("Right line effort: ");
-//    Serial.print("\t");
-//    Serial.print(lineEffortRight);
-//    Serial.println("");
     return lineEffortRight;
 }
 
