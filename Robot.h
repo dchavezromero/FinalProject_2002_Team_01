@@ -34,6 +34,7 @@ private:
         STARTUP,
         WAIT_1S,
         WALL_FOLLOW,
+        CREEP_FORWARD,
         TURN_LEFT_90,
         LINE_FOLLOW,
         TURN_RIGHT_90,
@@ -43,7 +44,7 @@ private:
     };
 
     //The robot should start in the STARTUP state
-    enum StateMachine currentState = STARTUP;
+    enum StateMachine currentState = LINE_FOLLOW;
 
     void incrementState();
 

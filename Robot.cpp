@@ -131,58 +131,59 @@ bool Robot::runStateMachine() {
 
         case WALL_FOLLOW:
             //Set the targets of the speed controller to the efforst output by the Wall PID
-            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
-            Serial.print("Left line motor effort: ");
+            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+
+            /*Serial.print("Left line motor effort: ");
             Serial.print(pid->getLeftLineEffort());
             Serial.print("\t");
             Serial.print("right line motor effort: ");
             Serial.print(pid->getRightLineEffort());
             Serial.print("\t");
             Serial.print("Base motor efforts speed: ");
-            Serial.println(pid->getCurrentBaseSpeed());
+            Serial.println(pid->getCurrentBaseSpeed());*/
 
             //If we detect a line
-            /*if(line->detectLine()) {
-                //Store the current encoder values to execute a turn
-                resetEncoderOffset();
-
+            if(line->detectLine()) {
                 //Go to the TURN_LEFT_90 state
                 incrementState();
-            }
-            */
 
-            //line->detectLine();
-
-            //pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
-            if(/*getDegreesTurned() > 90*/ false) {
-                lcd.clear();
-                lcd.print("YAY");
-                pid->setSpeedTargets(0, 0);
+                timer->Start(500);
             }
 
+            break;
+
+        case CREEP_FORWARD:
+            pid->setSpeedTargets(10, 10);
+
+            if(timer->CheckExpired()) {
+                resetEncoderOffset();
+
+                incrementState();
+            }
             break;
 
         case TURN_LEFT_90:
             //Set the speed targets for the speed PID such that we spin
-            pid->setSpeedTargets(PIVOT_SPEED, -PIVOT_SPEED);
+            pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotated 90 degrees since the last resetEncoderOffset() call (made at the end of the last state)
             if(getDegreesTurned() > 90) {
-                //TODO: Make sure we're updating speed targets so that the pivot speeds get overwritten when trying to acquire the line
-                if(line->doAlign(pid->getLeftLineEffort(), pid->getRightLineEffort())) {
-                    //incrementState();
-                }
+                incrementState();
             }
             break;
 
         case LINE_FOLLOW:
-            pid->calcLinePID(pid->getCurrentBaseSpeed());
+            //TODO: Remove argument if it is always 0
+            //pid->calcLinePID(0);
 
             //Set the speed targets for the speed PID based on the effort values calculated by the line following PID
-            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+            //pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+
+            pid->setSpeedTargets(0, 0);
+            line->detectLine();
 
             //If we detect a button press from the remote control
-            if(line->detectIR()) {
+            if(/*line->detectIR()*/ false) {
                 //Reset the encoder offset to execute a turn
                 resetEncoderOffset();
 
@@ -191,12 +192,13 @@ bool Robot::runStateMachine() {
             }
             break;
 
+        //TODO: Rename state
         case TURN_RIGHT_90:
             //Set the speed targets for the speed PID such that we spin
             pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotates 90 degrees since the last resetEncoderOffset() call
-            if(getDegreesTurned() < -90) {
+            if(getDegreesTurned() > 90) {
                 //Go to the DRIVE_UP_RAMP state
                 incrementState();
             }

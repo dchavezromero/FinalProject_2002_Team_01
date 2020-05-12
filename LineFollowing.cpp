@@ -45,24 +45,24 @@ bool LineFollowing::detectLine(void) {
   detectCenter = (lineSensorValues[1] > LIGHT_THRESHOLD);
   detectRight = (lineSensorValues[2] > LIGHT_THRESHOLD);
 
-//  Serial.print("Detected left line: ");
-//  Serial.print("\t");
-//  Serial.print(lineSensorValues[0]);
-//  Serial.print("\t");
-//  Serial.print(detectLeft);
-//  Serial.println("");
-//  Serial.print("Detected center line: ");
-//  Serial.print("\t");
-//  Serial.print(lineSensorValues[1]);
-//  Serial.print("\t");
-//  Serial.print(detectCenter);
-//  Serial.println("");
-//  Serial.print("Detected right line: ");
-//  Serial.print("\t");
-//  Serial.print(lineSensorValues[2]);
-//  Serial.print("\t");
-//  Serial.print(detectRight);
-//  Serial.println("");
+ Serial.print("Detected left line: ");
+ Serial.print("\t");
+ Serial.print(lineSensorValues[0]);
+ Serial.print("\t");
+ Serial.print(detectLeft);
+ Serial.println("");
+ Serial.print("Detected center line: ");
+ Serial.print("\t");
+ Serial.print(lineSensorValues[1]);
+ Serial.print("\t");
+ Serial.print(detectCenter);
+ Serial.println("");
+ Serial.print("Detected right line: ");
+ Serial.print("\t");
+ Serial.print(lineSensorValues[2]);
+ Serial.print("\t");
+ Serial.print(detectRight);
+ Serial.println("");
 
 return (detectLeft || detectCenter || detectRight);
 }
@@ -103,7 +103,7 @@ double LineFollowing::getPosition(void) {
 double LineFollowing::getPositionAlongLine(void){
   this->detectLine();
 
-  if(detectLeft && detectCenter && !detectRight){ 
+  if(detectLeft && detectCenter && !detectRight){
     line = 2;
   }
   else if(detectLeft && !detectCenter && !detectRight){
