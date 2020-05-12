@@ -103,7 +103,7 @@ double LineFollowing::getPosition(void) {
 double LineFollowing::getPositionAlongLine(void){
   this->detectLine();
 
-  if(detectLeft && detectCenter && !detectRight){
+  if(detectLeft && detectCenter && !detectRight){ 
     line = 2;
   }
   else if(detectLeft && !detectCenter && !detectRight){

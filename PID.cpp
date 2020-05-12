@@ -16,9 +16,9 @@ PID::PID(SharpIR *this_sharp, LineFollowing *this_line)
   wallConsts[2] = KD_WALL;
 
   //
-  // gyroConsts[0] = kp_gyro;
-  // gyroConsts[1] = ki_gyro;
-  // gyroConsts[2] = kd_gyro;
+  lineConsts[0] = KP_LINE;
+  lineConsts[1] = KI_LINE;
+  lineConsts[2] = KD_LINE;
 }
 
 void PID::setSpeedPID(double P, double I, double D)

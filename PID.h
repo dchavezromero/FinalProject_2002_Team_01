@@ -14,9 +14,9 @@
 #define KI_WALL 0.05
 #define KD_WALL 10.0
 
-#define KP_GYRO 0.2
-#define KI_GYRO 0.0
-#define KD_GYRO 0.0
+#define KP_LINE 2.0
+#define KI_LINE 0.003
+#define KD_LINE -0.001
 
 #define KP_SPEED 18.0
 #define KI_SPEED 1.5
