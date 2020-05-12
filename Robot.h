@@ -8,13 +8,18 @@
 #include "LineFollowing.h"
 #include "filter.h"
 
-#define WHEEL_TRACK 8.5 //Distance between wheels in CM
-#define TICKS_TO_CM 52.0 //TODO: Find this value
+//Distance between wheels in CM
+#define WHEEL_TRACK 8.5
 
-#define PIVOT_CIRCUMFERENCE (PI*WHEEL_TRACK)
+//Number of ticks per centimeters displaced
+#define TICKS_TO_CM 52.0
 
+#define PIVOT_CIRCUMFERENCE (PI*WHEEL_TRACK) //The circumference of the circle that the robot sits on
+
+//How fast the robot should pivot for turns. Out of a maximum of 75
 #define PIVOT_SPEED 20
 
+//Forward declare classes because of include dependencies
 class SharpIR;
 class LineFollowing;
 class PID;
@@ -24,6 +29,7 @@ class Robot {
 private:
     Robot();
 
+    //The different states the robot can be in
     enum StateMachine {
         STARTUP,
         WAIT_1S,
@@ -36,6 +42,7 @@ private:
         STOP,
     };
 
+    //The robot should start in the STARTUP state
     enum StateMachine currentState = STARTUP;
 
     void incrementState();
@@ -56,9 +63,11 @@ private:
 
     PID *pid;
 
-    bool onRamp = false; //Whether or not we've reached the ramp in the DRIVE_UP_RAMP state
+    //Whether or not we've reached the ramp in the DRIVE_UP_RAMP state
+    bool onRamp = false;
 
-    int16_t countsLeftOffset = 0; //Used to "reset" the values of the encoders
+    //Used to "reset" the values of the encoders
+    int16_t countsLeftOffset = 0;
     int16_t countsRightOffset = 0;
 
     void resetEncoderOffset();
