@@ -33,6 +33,9 @@ bool Robot::loop() {
 
     ir->getDistance();
 
+    line->update();
+
+
     if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
 
@@ -41,7 +44,6 @@ bool Robot::loop() {
 
     if(readyToWallPID) {
         pid->calcWallPID();
-        line->update();
 
         readyToWallPID = false;
     }
@@ -85,14 +87,15 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
-            }*/
+            }
+            */
 
-            line->detectLine();
+            //line->detectLine();
 
             //pid->setSpeedTargets(PIVOT_SPEED, PIVOT_SPEED);
             if(/*getDegreesTurned() > 90*/ false) {

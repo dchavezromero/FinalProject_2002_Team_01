@@ -80,11 +80,12 @@ void PID::calcWallPID()
     lastWallMillis = millis();
 
     //caculate error
-    float wallError = TARGET_DISTANCE - sharp->getDistance();
+    float wallError = TARGET_DISTANCE - sharp->AverageDistance();
+    Serial.println(wallError);
 
     //calculate derivate error
-    wallDerivativeError = (lastWallPosition - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
-    lastWallPosition = sharp->getDistance();
+    wallDerivativeError = (lastWallPosition - sharp->AverageDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
+    lastWallPosition = sharp->AverageDistance();
 
     //calculate integral error
     wallSum -= wallIntegralSum[currWallIndex];
@@ -92,13 +93,11 @@ void PID::calcWallPID()
     wallSum += wallError;
     currWallIndex++;
 
-    if(wallIterFlag == false) {
+    if(wallIterFlag == false)
         runningWallAvg = wallSum / currWallIndex;
-    } else {
+    else
         runningWallAvg = wallSum / wallSampleSize;
-        currWallIndex = 0;
-        wallIterFlag = true;
-    }
+
 
     if(currWallIndex == wallSampleSize){ //if buffer is full
       currWallIndex = 0; //reset index to dynamically update error entries
