@@ -81,7 +81,6 @@ void PID::calcWallPID()
 
     //caculate error
     float wallError = TARGET_DISTANCE - sharp->getDistance();
-    Serial.println(wallError);
 
     //calculate derivate error
     wallDerivativeError = (lastWallPosition - sharp->getDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
