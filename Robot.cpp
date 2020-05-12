@@ -38,7 +38,7 @@ bool Robot::loop() {
 
     if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
-        
+
         pid->calcLinePID(pid->getCurrentBaseSpeed());
 
         readyToSpeedPID = false;
@@ -92,7 +92,7 @@ bool Robot::runStateMachine() {
             //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
               pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
-           
+
 
 //              Serial.print("\t");
 //              Serial.print("Right line effort: ");
