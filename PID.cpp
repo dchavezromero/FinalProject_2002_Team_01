@@ -119,9 +119,7 @@ void PID::calcLinePID(float baseSpeedModifier)
   dtLine = millis() - lastLineMillis;
   lastLineMillis = millis();
 
-
-    lineError = line->getPosition();
-
+  lineError = line->getPosition();
 
   lineSum -= lineIntegralSum[currLineIndex];
   lineIntegralSum[currLineIndex] = lineError;

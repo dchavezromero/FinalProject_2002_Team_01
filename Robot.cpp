@@ -9,11 +9,7 @@ Robot* Robot::instance = 0;
  * anybody can get an instance of the robot through the getRobot() method.
 */
 Robot::Robot() {
-<<<<<<< HEAD
-    Serial.begin(115200);
-=======
     //Initialize all of the different tools we will need to traverse the course.
->>>>>>> 6830ab0be888a875855db25f2423ee6e806e2411
 
     //The timer is used to delay between states, so that the robot does not start
     //the moment the start button is pressed.
@@ -135,12 +131,12 @@ bool Robot::runStateMachine() {
 
         case WALL_FOLLOW:
             //Set the targets of the speed controller to the efforst output by the Wall PID
-            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
             Serial.print("Left line motor effort: ");
-            Serial.print(pid->getLeftWallEffort());
+            Serial.print(pid->getLeftLineEffort());
             Serial.print("\t");
             Serial.print("right line motor effort: ");
-            Serial.print(pid->getRightWallEffort());
+            Serial.print(pid->getRightLineEffort());
             Serial.print("\t");
             Serial.print("Base motor efforts speed: ");
             Serial.println(pid->getCurrentBaseSpeed());
