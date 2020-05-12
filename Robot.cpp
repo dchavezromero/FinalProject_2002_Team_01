@@ -174,16 +174,16 @@ bool Robot::runStateMachine() {
 
         case LINE_FOLLOW:
             //TODO: Remove argument if it is always 0
-            //pid->calcLinePID(0);
+            pid->calcLinePID(0);
 
             //Set the speed targets for the speed PID based on the effort values calculated by the line following PID
-            //pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
-            pid->setSpeedTargets(0, 0);
-            line->detectLine();
+            //pid->setSpeedTargets(0, 0);
+            //line->detectLine();
 
             //If we detect a button press from the remote control
-            if(/*line->detectIR()*/ false) {
+            if(line->detectIR() /*false*/) {
                 //Reset the encoder offset to execute a turn
                 resetEncoderOffset();
 
