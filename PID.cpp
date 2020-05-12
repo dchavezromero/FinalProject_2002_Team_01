@@ -115,17 +115,14 @@ void PID::calcWallPID()
 void PID::calcLinePID(float baseSpeedModifier)
 {
   double lineError = 0;
-  
+
   dtLine = millis() - lastLineMillis;
   lastLineMillis = millis();
-  
-  if (line->isParallel()){
-    lineError = line->getPositionAlongLine();
-  }
-  else{
+
+
     lineError = line->getPosition();
-  }
   
+
   lineSum -= lineIntegralSum[currLineIndex];
   lineIntegralSum[currLineIndex] = lineError;
   lineSum += lineError;

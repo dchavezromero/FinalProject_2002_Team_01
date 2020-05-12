@@ -91,12 +91,12 @@ bool Robot::runStateMachine() {
         case WALL_FOLLOW:
             //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
-            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
               Serial.print("Left line motor effort: ");
-              Serial.print(pid->getLeftWallEffort());
+              Serial.print(pid->getLeftLineEffort());
               Serial.print("\t");
               Serial.print("right line motor effort: ");
-              Serial.print(pid->getRightWallEffort());
+              Serial.print(pid->getRightLineEffort());
               Serial.print("\t");
               Serial.print("Base motor efforts speed: ");
               Serial.println(pid->getCurrentBaseSpeed());
