@@ -33,6 +33,9 @@ bool Robot::loop() {
 
     ir->getDistance();
 
+    line->update();
+
+
     if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
 
@@ -41,8 +44,7 @@ bool Robot::loop() {
 
     if(readyToWallPID) {
         pid->calcWallPID();
-        line->update();
-
+        
         readyToWallPID = false;
     }
 
