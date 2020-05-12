@@ -4,10 +4,19 @@ Button::Button(int pin) {
   this->pin = pin;
 }
 
+
+/*
+ * Initialize the button by setting the pin mode to input, with a pullup resistor
+*/
 void Button::Init() {
   pinMode(pin, INPUT_PULLUP);
 }
 
+
+/*
+ * Check whether a button press event has occured. Will only return true once
+ * @returns whether a single button event has occured
+*/
 bool Button::CheckButtonPress() {
   UpdateState();
 
@@ -20,6 +29,11 @@ bool Button::CheckButtonPress() {
   return false;
 }
 
+
+/*
+ * State machine for debouncing. Will wait and make sure that the button has settled
+ * before signaling a button presse event.
+*/
 void Button::UpdateState() {
     //If we are currently waiting for a button press
     if(buttonState == WAIT_FOR_PRESS) {
