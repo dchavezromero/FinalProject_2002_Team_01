@@ -10,9 +10,9 @@
 
 #define TARGET_DISTANCE 20
 
-#define KP_WALL 1.0
-#define KI_WALL 0.0
-#define KD_WALL 0.0
+#define KP_WALL 0.5
+#define KI_WALL 0.05
+#define KD_WALL 10.0
 
 #define KP_GYRO 0.2
 #define KI_GYRO 0.0

@@ -75,16 +75,15 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
 
 void PID::calcWallPID()
 {
-    dtWall = millis() - lastWallMillis;
-
-    lastWallMillis = millis();
-
-    //caculate error
+        //caculate error
     float wallError = TARGET_DISTANCE - sharp->AverageDistance();
     Serial.println(wallError);
 
+    dtWall = millis() - lastWallMillis;
+    lastWallMillis = millis();
+
     //calculate derivate error
-    wallDerivativeError = (lastWallPosition - sharp->AverageDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
+    wallDerivativeError = (lastWallPosition - sharp->AverageDistance()); //*10^-3 due to millis reading
     lastWallPosition = sharp->AverageDistance();
 
     //calculate integral error

@@ -89,6 +89,7 @@ bool Robot::runStateMachine() {
         case WALL_FOLLOW:
             pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
+            Serial.println("test");
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
