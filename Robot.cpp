@@ -69,7 +69,7 @@ bool Robot::loop() {
         pid->calcSpeedPID(countsLeft, countsRight);
 
         //Update the line following PID
-        pid->calcLinePID(0);
+        //pid->calcLinePID(0);
 
         //Reset the readyToSpeedPID flag so that we do not run these again until
         //we have new encoder values
@@ -174,13 +174,13 @@ bool Robot::runStateMachine() {
 
         case LINE_FOLLOW:
             //TODO: Remove argument if it is always 0
-            //pid->calcLinePID(0);
+            pid->calcLinePID(0);
 
             //Set the speed targets for the speed PID based on the effort values calculated by the line following PID
-            //pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+            pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
-            pid->setSpeedTargets(0, 0);
-            line->detectLine();
+            //pid->setSpeedTargets(0, 0);
+            //line->detectLine();
 
             //If we detect a button press from the remote control
             if(/*line->detectIR()*/ false) {
