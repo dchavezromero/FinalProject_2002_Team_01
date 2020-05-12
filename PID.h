@@ -37,7 +37,7 @@ private:
   float lastWallPosition = 0;
   float wallSum = 0;
   float runningWallAvg = 0;
-  uint8_t currWallIndex = 0; //used to reference integral windup buffer
+  char currWallIndex = 0; //used to reference integral windup buffer
   unsigned long lastWallMillis = 0;
   unsigned long dtWall = 0;
   bool wallIterFlag = false;
@@ -48,17 +48,18 @@ private:
   int16_t prevLeft = 0;
   int16_t prevRight = 0;
 
-  static const int lineSampleSize = 10;
-  double lineIntegralSum[lineSampleSize] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
-  double lastLinePositon = 0;   //used to calculate the D term in IRPID
-
-  float lineSum = 0;
-  float runningLineAvg = 0;
-  uint8_t currLineIndex = 0; //used to reference integral windup buffer
   unsigned long lastLineMillis = 0;
   unsigned long dtLine = 0;
-  float currentBaseSpeed = BASE_LINE_FOLLOW_SPEED;
   bool lineIterFlag = false;
+  float lineSum = 0;
+  char currLineIndex = 0; //used to reference integral windup buffer
+  float runningLineAvg = 0;
+  static const int lineSampleSize = 10;
+  double lineIntegralSum[lineSampleSize] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
+  double lastLineError = 0;   //used to calculate the D term in IRPID
+
+  char currlineIndex = 0; //used to reference integral windup buffer
+  float currentBaseSpeed = BASE_LINE_FOLLOW_SPEED;
 
   SharpIR *sharp;
   LineFollowing *line;
@@ -83,7 +84,6 @@ public:
   void calcLinePID(float baseSpeedModifier);
 
   void setSpeedTargets(int16_t targetLeftSpeed, int16_t targetRightSpeed);
-  void clearLineIntegralBuffer(void);
 
   void setSpeedPID(double P, double I, double D);
   void setWallPID(double P, double I, double D);

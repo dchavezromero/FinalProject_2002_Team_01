@@ -89,16 +89,18 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-//              pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
-              pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+              Serial.print("Left line motor effort: ");
+              Serial.print(pid->getLeftWallEffort());
+              Serial.print("\t");
+              Serial.print("right line motor effort: ");
+              Serial.print(pid->getRightWallEffort());
+              Serial.print("\t");
+              Serial.print("Base motor efforts speed: ");
+              Serial.println(pid->getCurrentBaseSpeed());
 
-
-//              Serial.print("\t");
-              Serial.println("Right line effort: ");
-//              Serial.print("\t");
-//              Serial.print(pid->getRightLineEffort());
-//              Serial.println("");
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
