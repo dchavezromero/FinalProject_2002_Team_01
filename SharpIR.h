@@ -12,6 +12,10 @@
 class SharpIR {
 private:
     int val = 0;
+    int MaxIRIndex = 10;
+    int IRIndex = 0;
+    float averageIR[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float average = 0;
 public:
     EventTimer *timer;                 //nonblocking timer for when to read
     uint8_t pin = A6;                   //default IR pin
@@ -19,6 +23,7 @@ public:
 
     SharpIR(uint8_t thisPin);
     float getDistance(void);
+    float AverageDistance(void);
 };
 
 
