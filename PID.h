@@ -10,9 +10,9 @@
 
 #define TARGET_DISTANCE 20
 
-#define KP_WALL 0.2
-#define KI_WALL 0.09
-#define KD_WALL 0.03
+#define KP_WALL 0.5
+#define KI_WALL 0.05
+#define KD_WALL 10.0
 
 #define KP_GYRO 0.2
 #define KI_GYRO 0.0
@@ -34,11 +34,10 @@ private:
   static const int wallSampleSize = 10;
   double wallIntegralSum[wallSampleSize] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
   double lastWallError = 0;   //used to calculate the D term in IRPID
-  double wallDerivativeError = 0;
   float lastWallPosition = 0;
   float wallSum = 0;
   float runningWallAvg = 0;
-  char currWallIndex = 0; //used to reference integral windup buffer
+  uint8_t currWallIndex = 0; //used to reference integral windup buffer
   unsigned long lastWallMillis = 0;
   unsigned long dtWall = 0;
   bool wallIterFlag = false;
@@ -49,11 +48,17 @@ private:
   int16_t prevLeft = 0;
   int16_t prevRight = 0;
 
-  double lineIntegralSum[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
-  double lastlineError = 0;   //used to calculate the D term in IRPID
+  static const int lineSampleSize = 10;
+  double lineIntegralSum[lineSampleSize] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //used to limit I term
+  double lastLinePositon = 0;   //used to calculate the D term in IRPID
 
-  char currlineIndex = 0; //used to reference integral windup buffer
+  float lineSum = 0;
+  float runningLineAvg = 0;
+  uint8_t currLineIndex = 0; //used to reference integral windup buffer
+  unsigned long lastLineMillis = 0;
+  unsigned long dtLine = 0;
   float currentBaseSpeed = BASE_LINE_FOLLOW_SPEED;
+  bool lineIterFlag = false;
 
   SharpIR *sharp;
   LineFollowing *line;
@@ -75,9 +80,10 @@ public:
 
   void calcSpeedPID(int16_t countsLeft, int16_t countsRight);
   void calcWallPID();
-  void calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float baseSpeedModifier);
+  void calcLinePID(float baseSpeedModifier);
 
   void setSpeedTargets(int16_t targetLeftSpeed, int16_t targetRightSpeed);
+  void clearLineIntegralBuffer(void);
 
   void setSpeedPID(double P, double I, double D);
   void setWallPID(double P, double I, double D);

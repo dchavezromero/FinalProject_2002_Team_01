@@ -45,24 +45,24 @@ bool LineFollowing::detectLine(void) {
   detectCenter = (lineSensorValues[1] > LIGHT_THRESHOLD);
   detectRight = (lineSensorValues[2] > LIGHT_THRESHOLD);
 
-  Serial.print("Detected left line: ");
-  Serial.print("\t");
-  Serial.print(lineSensorValues[0]);
-  Serial.print("\t");
-  Serial.print(detectLeft);
-  Serial.println("");
-  Serial.print("Detected center line: ");
-  Serial.print("\t");
-  Serial.print(lineSensorValues[1]);
-  Serial.print("\t");
-  Serial.print(detectCenter);
-  Serial.println("");
-  Serial.print("Detected right line: ");
-  Serial.print("\t");
-  Serial.print(lineSensorValues[2]);
-  Serial.print("\t");
-  Serial.print(detectRight);
-  Serial.println("");
+//  Serial.print("Detected left line: ");
+//  Serial.print("\t");
+//  Serial.print(lineSensorValues[0]);
+//  Serial.print("\t");
+//  Serial.print(detectLeft);
+//  Serial.println("");
+//  Serial.print("Detected center line: ");
+//  Serial.print("\t");
+//  Serial.print(lineSensorValues[1]);
+//  Serial.print("\t");
+//  Serial.print(detectCenter);
+//  Serial.println("");
+//  Serial.print("Detected right line: ");
+//  Serial.print("\t");
+//  Serial.print(lineSensorValues[2]);
+//  Serial.print("\t");
+//  Serial.print(detectRight);
+//  Serial.println("");
 
 return (detectLeft || detectCenter || detectRight);
 }
@@ -136,7 +136,7 @@ bool LineFollowing::isParallel(void)
 //adjusts slowly to try to align the center sensor to the line
 bool LineFollowing::doAlign(float leftEffort, float rightEffort){
 
-    pid->calcLinePID(leftEffort, rightEffort, BASE_LINE_FOLLOW_SPEED);
+    pid->calcLinePID(BASE_LINE_FOLLOW_SPEED);
 
     if (leftEffort == 0 && rightEffort == 0){
         return true;
@@ -150,7 +150,7 @@ bool LineFollowing::doAlignAlong(float leftEffort, float rightEffort){
 
   parallel = true;
 
-  pid->calcLinePID(leftEffort, rightEffort, BASE_LINE_FOLLOW_SPEED);
+  pid->calcLinePID(BASE_LINE_FOLLOW_SPEED);
 
   if (leftEffort == 0 && rightEffort == 0){
     parallel = false;

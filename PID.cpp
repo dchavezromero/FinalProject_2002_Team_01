@@ -67,7 +67,7 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
      sumRight = 200;
    }
 
-   Serial.println(errorLeft);
+   //Serial.println(errorLeft);
 
   speedEffortLeft = speedConsts[0] * errorLeft + speedConsts[1] * sumLeft;
   speedEffortRight = speedConsts[0] * errorRight + speedConsts[1] * sumRight;
@@ -75,17 +75,16 @@ void PID::calcSpeedPID(int16_t countsLeft, int16_t countsRight)
 
 void PID::calcWallPID()
 {
-    dtWall = millis() - lastWallMillis;
+        //caculate error
+    float wallError = TARGET_DISTANCE - sharp->AverageDistance();
+    //Serial.println(wallError);
 
+    dtWall = millis() - lastWallMillis;
     lastWallMillis = millis();
 
-    //caculate error
-    float wallError = TARGET_DISTANCE - sharp->AverageDistance();
-    Serial.println(wallError);
-
     //calculate derivate error
-    wallDerivativeError = (lastWallPosition - sharp->AverageDistance())/(dtWall * pow(10, -3)); //*10^-3 due to millis reading
-    lastWallPosition = sharp->AverageDistance();
+    double wallDerivativeError = (lastWallPosition - sharp->AverageDistance()); //*10^-3 due to millis reading
+      lastWallPosition = sharp->AverageDistance();
 
     //calculate integral error
     wallSum -= wallIntegralSum[currWallIndex];
@@ -113,42 +112,48 @@ void PID::calcWallPID()
     wallEffortRight = BASE_WALL_FOLLOW_SPEED + effort;
 }
 
-void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float baseSpeedModifier)
+void PID::calcLinePID(float baseSpeedModifier)
 {
-  double lineError = 0;
-  double lineSum = 0;
-  lineEffortLeft = thisLineEffortLeft;
-  lineEffortRight = thisLineEffortRight;
+  double linePosition = 0;
+
+  dtLine = millis() - lastLineMillis;
+  lastLineMillis = millis();
 
   if (line->isParallel()){
-    lineError = line->getPositionAlongLine();
+    linePosition = line->getPositionAlongLine();
   }
   else{
-    lineError = line->getPosition();
+    linePosition = line->getPosition();
   }
+  double lineError = lastLinePositon - linePosition;
 
-  if(currlineIndex >= 10)
-    currlineIndex = 0;
+//  if(abs(linePosition) + abs(lastLinePositon) > abs(linePosition + lastLinePositon)) //check for sign change in position
+//    clearLineIntegralBuffer();
 
-  lineIntegralSum[currlineIndex] = lineError;
-  currlineIndex++;
+  double lineDerivativeError = (lastLinePositon - linePosition)/dtLine;
+  lastLinePositon = linePosition;
 
-  for(char i = 0; i < 10; i++)
-  {
-    lineSum += lineIntegralSum[i];
+  lineSum -= lineIntegralSum[currLineIndex];
+  lineIntegralSum[currLineIndex] = lineError;
+  lineSum += lineError;
+  currLineIndex++;
+
+  if(lineIterFlag == false)
+      runningLineAvg = lineSum / currLineIndex;
+  else
+      runningLineAvg = lineSum / lineSampleSize;
+
+  if(currLineIndex == lineSampleSize){ //if buffer is full
+    currLineIndex = 0; //reset index to dynamically update error entries
+    lineIterFlag = true; //set flag to true
   }
-
-  lineSum = lineSum / currlineIndex;
-
-  double lineDiff = lastlineError - lineError;
-  lastlineError = lineError;
 
   if (lineError > 0){
     lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
-    lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) + (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
+    lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) + (lineConsts[0] * lineError + lineConsts[1] * runningLineAvg + lineConsts[2] * lineDerivativeError);
   }
   else if (lineError < 0){
-    lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) - (lineConsts[0] * lineError + lineConsts[1] * lineSum + lineConsts[2] * lineDiff);
+    lineEffortLeft = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier) - (lineConsts[0] * lineError + lineConsts[1] * runningLineAvg + lineConsts[2] * lineDerivativeError);
     lineEffortRight = (BASE_LINE_FOLLOW_SPEED - baseSpeedModifier);
   }
     else if(lineError == 0){
@@ -157,15 +162,33 @@ void PID::calcLinePID(float thisLineEffortLeft, float thisLineEffortRight, float
   }
 }
 
+void PID::clearLineIntegralBuffer(void) {
+
+  for(uint8_t i = 0; i < lineSampleSize; i++) {
+    lineIntegralSum[i] = 0;
+  }
+
+	lineSum = 0; //reset vars
+	currLineIndex = 0;
+	lineIterFlag = false;
+}
+
 void PID::updateCurrentBaseSpeed(float baseSpeedModifier) {
   currentBaseSpeed = currentBaseSpeed - baseSpeedModifier;
 }
 
 float PID::getLeftLineEffort() {
+//    Serial.print("Left line effort: ");
+//    Serial.print("\t");
+//    Serial.print(lineEffortLeft);
     return lineEffortLeft;
 }
 
 float PID::getRightLineEffort() {
+//    Serial.print("Right line effort: ");
+//    Serial.print("\t");
+//    Serial.print(lineEffortRight);
+//    Serial.println("");
     return lineEffortRight;
 }
 

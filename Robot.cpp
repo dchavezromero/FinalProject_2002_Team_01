@@ -39,6 +39,8 @@ bool Robot::loop() {
     if(readyToSpeedPID) {
         pid->calcSpeedPID(countsLeft, countsRight);
 
+        pid->calcLinePID(pid->getCurrentBaseSpeed());
+
         readyToSpeedPID = false;
     }
 
@@ -87,8 +89,16 @@ bool Robot::runStateMachine() {
             }
             break;
         case WALL_FOLLOW:
-            pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
+            //pid->setSpeedTargets(pid->getLeftWallEffort(), pid->getRightWallEffort());
 
+              pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
+
+
+//              Serial.print("\t");
+//              Serial.print("Right line effort: ");
+//              Serial.print("\t");
+//              Serial.print(pid->getRightLineEffort());
+//              Serial.println("");
             /*if(line->detectLine()) {
                 resetEncoderOffset();
                 incrementState();
@@ -116,7 +126,7 @@ bool Robot::runStateMachine() {
             }
             break;
         case LINE_FOLLOW:
-            pid->calcLinePID(pid->getLeftLineEffort(), pid->getRightLineEffort(), pid->getCurrentBaseSpeed());
+            pid->calcLinePID(pid->getCurrentBaseSpeed());
 
             pid->setSpeedTargets(pid->getLeftLineEffort(), pid->getRightLineEffort());
 
