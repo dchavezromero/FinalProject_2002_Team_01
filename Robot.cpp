@@ -183,7 +183,7 @@ bool Robot::runStateMachine() {
             //line->detectLine();
 
             //If we detect a button press from the remote control
-            if(/*line->detectIR()*/ false) {
+            if(line->detectIR() /*false*/) {
                 //Reset the encoder offset to execute a turn
                 resetEncoderOffset();
 
