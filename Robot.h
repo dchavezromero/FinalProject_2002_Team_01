@@ -17,7 +17,7 @@
 #define PIVOT_CIRCUMFERENCE (PI*WHEEL_TRACK) //The circumference of the circle that the robot sits on
 
 //How fast the robot should pivot for turns. Out of a maximum of 75
-#define PIVOT_SPEED 20
+#define PIVOT_SPEED 12
 
 //Forward declare classes because of include dependencies
 class SharpIR;

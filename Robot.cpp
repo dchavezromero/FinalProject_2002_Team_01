@@ -183,9 +183,9 @@ bool Robot::runStateMachine() {
             //line->detectLine();
 
             //If we detect a button press from the remote control
-            if(/*line->detectIR()*/ false) {
+            if(line->detectIR()) {
                 //Reset the encoder offset to execute a turn
-                resetEncoderOffset();
+                //resetEncoderOffset();
 
                 //Go to the TURN_RIGHT_90 state
                 incrementState();
@@ -198,7 +198,7 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotates 90 degrees since the last resetEncoderOffset() call
-            if(getDegreesTurned() > 90) {
+            if(getDegreesTurned() > 80) {
                 //Go to the DRIVE_UP_RAMP state
                 incrementState();
             }
