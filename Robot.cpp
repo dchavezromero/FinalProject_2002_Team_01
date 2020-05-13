@@ -126,6 +126,9 @@ bool Robot::runStateMachine() {
 
                 //Store the current encoder values, in case the robot was moved before starting
                 resetEncoderOffset();
+
+                lcd.clear();
+                lcd.print("WALL_FOLLOW");
             }
             break;
 
@@ -148,6 +151,9 @@ bool Robot::runStateMachine() {
                 incrementState();
 
                 timer->Start(400);
+
+                lcd.clear();
+                lcd.print("CREEP_FORWARD");
             }
 
             break;
@@ -159,6 +165,9 @@ bool Robot::runStateMachine() {
                 resetEncoderOffset();
 
                 incrementState();
+
+                lcd.clear();
+                lcd.print("TURN");
             }
             break;
 
@@ -167,8 +176,13 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotated 90 degrees since the last resetEncoderOffset() call (made at the end of the last state)
-            if(getDegreesTurned() > 80) {
+            if(getDegreesTurned() > 90) {
                 incrementState();
+
+                resetEncoderOffset();
+
+                lcd.clear();
+                lcd.print("LINE FOLLOW");
             }
             break;
 
@@ -189,6 +203,9 @@ bool Robot::runStateMachine() {
 
                 //Go to the TURN_RIGHT_90 state
                 incrementState();
+
+                lcd.clear();
+                lcd.print("TURN");
             }
             break;
 
@@ -201,6 +218,9 @@ bool Robot::runStateMachine() {
             if(getDegreesTurned() > 80) {
                 //Go to the DRIVE_UP_RAMP state
                 incrementState();
+
+                lcd.clear();
+                lcd.print("DRIVE UP RAMP");
             }
             break;
 
