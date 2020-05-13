@@ -44,7 +44,7 @@ private:
     };
 
     //The robot should start in the STARTUP state
-    enum StateMachine currentState = LINE_FOLLOW;
+    enum StateMachine currentState = STARTUP;
 
     void incrementState();
 

@@ -147,7 +147,7 @@ bool Robot::runStateMachine() {
                 //Go to the TURN_LEFT_90 state
                 incrementState();
 
-                timer->Start(500);
+                timer->Start(400);
             }
 
             break;
@@ -167,7 +167,7 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotated 90 degrees since the last resetEncoderOffset() call (made at the end of the last state)
-            if(getDegreesTurned() > 90) {
+            if(getDegreesTurned() > 80) {
                 incrementState();
             }
             break;
@@ -198,7 +198,7 @@ bool Robot::runStateMachine() {
             pid->setSpeedTargets(-PIVOT_SPEED, PIVOT_SPEED);
 
             //If we have rotates 90 degrees since the last resetEncoderOffset() call
-            if(getDegreesTurned() > 90) {
+            if(getDegreesTurned() > 80) {
                 //Go to the DRIVE_UP_RAMP state
                 incrementState();
             }
@@ -238,7 +238,7 @@ bool Robot::runStateMachine() {
             Serial.println(getDegreesTurned());
 
             //If we have turned more than 360 degrees
-            if(getDegreesTurned() > 360) {
+            if(getDegreesTurned() > 350) {
                 //Stop the robot
                 pid->setSpeedTargets(0, 0);
 
